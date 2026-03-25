@@ -63,5 +63,5 @@
   "socket": false,
   "url": "https://github.com/BeskarBear/SR4e-foundry-VTT",
   "manifest": "https://raw.githubusercontent.com/BeskarBear/SR4e-foundry-VTT/main/system.json",
-  "download": "https://github.com/BeskarBear/SR4e-foundry-VTT/releases/download/v0.1.0/sr4.zip"
+  "download": "https://github.com/BeskarBear/SR4e-foundry-VTT/releases/download/0.1.0/sr4.zip"
 }
