@@ -1,17 +1,41 @@
 /**
- * SR4Roll — Shadowrun 4th Edition dice pool roller
+ * @file sr4-roll.mjs — SR4 20th Anniversary dice pool engine.
  *
- * SR4 mechanics:
- *  - Roll a pool of d6 dice
- *  - Each die showing 5 or 6 = 1 Hit
- *  - Glitch: half or more dice show 1s
- *  - Critical Glitch: glitch + zero hits
- *  - Rule of Six (Edge only): 6s are hits AND re-rolled; chain until no 6s
- *  - Buying Hits: trade 4 dice for 1 automatic hit (no glitch risk)
+ * ── SR4 DICE MECHANICS (SR4A p.54-62) ────────────────────────────────────────
+ * Every test in SR4 uses the same resolution method:
+ *   1. Assemble a pool of d6 dice (skill + attribute + modifiers)
+ *   2. Roll all dice
+ *   3. Count hits: each die showing 5 or 6 = 1 hit
+ *   4. Net hits = hits − threshold (or opponent's hits in opposed tests)
+ *
+ * GLITCH (SR4A p.56):
+ *   If ≥ half the dice rolled show 1, the test suffers a "Glitch."
+ *   On a glitch, something goes wrong — even if the test succeeds.
+ *   Note: only initial dice count (before Rule of Six re-rolls) toward the glitch check.
+ *
+ * CRITICAL GLITCH (SR4A p.56):
+ *   Glitch condition is met AND the roll has zero hits.
+ *   Worst possible outcome — the test fails catastrophically.
+ *
+ * RULE OF SIX / EDGE (SR4A p.56, 72):
+ *   Normal rolls: 5-6 count as hits; no re-roll.
+ *   Edge spending (edge=true): each 6 is a hit AND re-rolled; chain until no 6s.
+ *   This makes Edge very powerful at high die counts (explosive reroll chain).
+ *   SR3 applies Rule of Six on EVERY roll, always — not limited to a resource.
+ *
+ * BUYING HITS (SR4A p.64):
+ *   Alternative to rolling: 4 dice = 1 automatic hit, no glitch risk.
+ *   pool=12 → 3 guaranteed hits. Used when time/pressure is not a factor.
+ *   Implemented via the pool-builder dialog, not in this class.
+ *
+ * INITIATIVE ROLLS (special case):
+ *   Initiative uses SR4Roll in "sum mode" — dice are summed, NOT hit-counted.
+ *   SR4Combat calls rollInitiative() which sums the d6 results and adds to the
+ *   base score (Reaction + Intuition). This class supports both modes.
  *
  * Usage:
- *   const roll = new SR4Roll(12);             // 12 dice, no Edge
- *   const roll = new SR4Roll(12, { edge: true }); // with Rule of Six
+ *   const roll = new SR4Roll(12);                   // 12 dice, no Edge
+ *   const roll = new SR4Roll(12, { edge: true });   // with Rule of Six (Edge spend)
  *   await roll.evaluate();
  *   console.log(roll.hits, roll.isGlitch, roll.isCritGlitch);
  */

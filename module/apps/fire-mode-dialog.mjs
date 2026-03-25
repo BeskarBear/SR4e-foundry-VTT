@@ -1,25 +1,65 @@
 /**
- * FireModeDialog — Fire mode selection for ranged weapon attacks.
- * Presents available firing modes based on weapon.mode string,
- * current ammo count, and cumulative recoil.
+ * @file fire-mode-dialog.mjs — Fire mode and reload dialogs for SR4A ranged combat.
+ *
+ * ── FIRE MODE SELECTION ───────────────────────────────────────────────────────
+ * SR4A ranged weapons have one or more fire modes in their mode string: "SA/BF/FA".
+ * On each ranged attack the runner chooses which mode to use from those available.
+ * showFireModeDialog() builds the available option set, disables options with
+ * insufficient ammo, and resolves the promise with the chosen mode object.
  *
  * SR4A fire mode mechanics (p.148-152):
- * ─────────────────────────────────────────────────────────────────────────
- * Mode   | Option              | Rnds | DV Bonus | Recoil Added | Notes
- * -------|---------------------|------|----------|--------------|-------
- * SS     | Single Shot         |  1   |    0     |      0       |
- * SA     | Standard            |  1   |    0     |      0       |
- * SA     | Double-Tap          |  2   |   +1     |     −1       |
- * BF     | Short Burst         |  3   |   +2     |     −2       |
- * BF     | Long Burst          |  6   |   +5     |     −5       |
- * FA     | Short Burst         |  6   |   +4     |     −4       | Complex Action
- * FA     | Long Burst          | 10   |   +9     |     −9       | Complex Action
- * FA     | Suppressive Fire    | 20   |    —     |      —       | No attack roll
- * ─────────────────────────────────────────────────────────────────────────
- * Effective recoil penalty = max(0, cumulativeRecoil − weapon.totalRC)
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Mode   │ Option              │ Rnds │ DV Bonus │ Recoil Added │ Action Type
+ * ───────┼─────────────────────┼──────┼──────────┼──────────────┼──────────────
+ * SS     │ Single Shot         │  1   │   +0     │      0       │ Simple
+ * SA     │ Standard            │  1   │   +0     │      0       │ Simple
+ * SA     │ Double-Tap          │  2   │   +1     │     +1       │ Simple
+ * BF     │ Short Burst (3)     │  3   │   +2     │     +2       │ Simple
+ * BF     │ Long Burst (6)      │  6   │   +5     │     +5       │ Complex
+ * FA     │ Short Burst (6)     │  6   │   +4     │     +4       │ Complex
+ * FA     │ Long Burst (10)     │ 10   │   +9     │     +9       │ Complex
+ * FA     │ Suppressive (20)    │ 20   │    —     │      —       │ Complex (no attack roll)
+ * ─────────────────────────────────────────────────────────────────────────────
+ * DV Bonus: added to the weapon's base DV for this shot only.
+ *   e.g. a weapon with DV "6P" fired in BF-Short Burst deals "8P".
+ *
+ * Recoil system (SR4A p.148):
+ *   cumulativeRecoil: running total across all shots in a combat turn.
+ *   weapon.totalRC: Recoil Compensation (reduces penalty; typically 0-3 for stock weapons).
+ *   Effective penalty = max(0, cumulativeRecoil − totalRC).
+ *   This penalty SUBTRACTS from the attack dice pool.
+ *   Recoil resets at the start of the runner's next combat turn (_onRecoilReset in sheet).
+ *
+ * APDS restriction (SR4A p.163):
+ *   APDS ammo cannot be used in BF or FA modes due to the discarding sabot mechanism.
+ *   When APDS is loaded, burst/auto options are filtered out entirely.
+ *
+ * Suppressive Fire (SR4A p.150):
+ *   No attack roll made. Creates a suppression zone; opponents in zone must resist.
+ *   Costs 20 rounds. Resolves separately from normal attack flow.
+ *
+ * ── RELOAD DIALOG ────────────────────────────────────────────────────────────
+ * showReloadDialog() lists ammo items in the actor's inventory with quantity > 0.
+ * On confirm:
+ *   1. weapon.ammo.current is filled up to max (using available quantity)
+ *   2. ammo item quantity is decremented by rounds loaded
+ *   3. weapon stores loaded ammo stats (dvMod, apMod, damageTypeOverride)
+ *      so the sheet roll code can apply them at shot time without reading the item
  */
 
-/** All possible fire options — filtered by weapon.mode at runtime. */
+/**
+ * Master list of all fire mode options.
+ * Filtered at runtime by weapon.mode string tokens (e.g. "SA/BF" → SA and BF entries only).
+ * Fields:
+ *   id           {string}  Unique option key, used to recover selection after dialog
+ *   modes        {string[]} Which weapon.mode tokens enable this option
+ *   label        {string}  Display name shown in dialog
+ *   action       {string}  "Simple" or "Complex" action cost
+ *   rounds       {number}  Rounds consumed from current ammo
+ *   dvMod        {number}  Added to weapon base DV for this shot (0 = no change)
+ *   recoilAdded  {number}  Added to cumulativeRecoil AFTER this shot
+ *   suppressive  {boolean} True = no attack roll; resolves as suppression zone
+ */
 const ALL_FIRE_OPTIONS = [
   { id: "ss",     modes: ["SS"],     label: "Single Shot",      action: "Simple",  rounds: 1,  dvMod: 0, recoilAdded: 0,  suppressive: false },
   { id: "sa",     modes: ["SA"],     label: "Standard",         action: "Simple",  rounds: 1,  dvMod: 0, recoilAdded: 0,  suppressive: false },
@@ -150,14 +190,29 @@ export async function showFireModeDialog(weapon, actor) {
 }
 
 /**
- * Show the reload dialog.
- * Lists all ammo items in the actor's inventory.
- * On confirm, fills weapon.ammo.current up to max, decrements ammo item quantity,
- * and stores the ammo's modifiers on the weapon.
+ * Show the reload dialog for a ranged weapon.
  *
- * @param {Item}   weapon
- * @param {Actor}  actor
- * @returns {Promise<boolean>} true if reloaded
+ * Lists all ammo items in the actor's inventory (type === "ammo", quantity > 0).
+ * On confirm:
+ *   1. Fills weapon.ammo.current up to its max capacity (uses min(needed, available)).
+ *   2. Decrements ammo item quantity by the rounds loaded.
+ *   3. Stores the ammo's modifiers on the weapon for use at shot time:
+ *        system.ammo.dvMod              → dvModifier from AmmoDataModel
+ *        system.ammo.apMod              → apModifier from AmmoDataModel
+ *        system.ammo.damageTypeOverride → damageTypeOverride from AmmoDataModel
+ *        system.ammo.type               → ammo item name (display only)
+ *
+ * Storing modifiers on the weapon means the sheet's attack code can apply them
+ * without needing to re-read the ammo item each shot — which matters when
+ * the ammo item quantity reaches 0 mid-fight but the gun is still loaded.
+ *
+ * SR4A reloading: reloading takes a Simple Action (ejecting the clip) +
+ * another Simple Action (inserting new clip). Track this time externally —
+ * the dialog doesn't enforce action economy.
+ *
+ * @param {Item}   weapon  — The ranged weapon item being reloaded
+ * @param {Actor}  actor   — The owning actor (source of ammo inventory)
+ * @returns {Promise<boolean>} Resolves true if reload succeeded; false if cancelled or no ammo
  */
 export async function showReloadDialog(weapon, actor) {
   const ammoItems = actor.items.filter(i => i.type === "ammo" && i.system.quantity > 0);

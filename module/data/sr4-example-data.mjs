@@ -265,8 +265,10 @@ export const EXAMPLE_ARMOR = [
     type: "armor",
     img: "icons/equipment/chest/vest-cloth-tattered.webp",
     system: {
-      armorB:      4,         // Ballistic — vs firearms / projectiles
-      armorI:      2,         // Impact — vs melee / explosions / stun
+      armorB:      4,         // Ballistic — resists firearms/projectile damage
+                              // SR4 splits armor into Ballistic/Impact; only highest applies
+                              // (clothing and armor bonuses are separate and do stack)
+      armorI:      2,         // Impact — resists melee/falling/explosion/stun damage
       armorType:   "vest",
       mods:        [],        // Armor mods that add bonuses: { name, bonusB, bonusI, notes }
       conceal:     8,         // High — can wear under clothing
@@ -466,8 +468,15 @@ export const EXAMPLE_CYBERWARE = [
     img: "icons/equipment/hand/glove-worn-torn.webp",
     system: {
       wareType:       "cyber",
-      grade:          "standard",   // used / standard / alpha / beta / delta
-      essenceCost:    0.3,          // Base Essence cost (before grade multiplier)
+      grade:          "standard",   // Grades: used / standard / alpha / beta / delta
+                                    // Grade multiplies the Essence cost:
+                                    //   Used     × 1.25 (cheaper but more Essence loss)
+                                    //   Standard × 1.0  (baseline)
+                                    //   Alpha    × 0.8  (less Essence loss)
+                                    //   Beta     × 0.7
+                                    //   Delta    × 0.5  (highest quality, least Essence)
+      essenceCost:    0.3,          // Base Essence cost BEFORE grade multiplier is applied
+                                    // CyberwareDataModel.effectiveEssence applies the multiplier
       category:       "augmentation",
       statBonuses:    [
         { stat: "reaction", bonus: 1 }  // Each instance adds +1 Reaction

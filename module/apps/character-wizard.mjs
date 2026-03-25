@@ -1,15 +1,86 @@
 /**
- * CharacterWizard — SR4 20th Anniversary character creation wizard.
- * 400 BP build point system. Six steps: Concept → Attributes → Skills →
- * Qualities → Contacts → Review & Create.
+ * @file character-wizard.mjs — SR4 20th Anniversary 400 BP character creation wizard.
  *
- * Racial attribute ranges from SR4A p.70–71 (approximate; verify against book).
+ * ── OVERVIEW ─────────────────────────────────────────────────────────────────
+ * SR4A uses a Build Point system (SR4A p.88-98): every character starts with
+ * 400 BP and spends them across metatype, attributes, skills, qualities, and contacts.
+ * BP is a unified currency — spend it however you like across all character categories.
+ *
+ * The wizard walks the player through six steps in order, tracking the BP budget
+ * in real time. No step is gated — the player can navigate freely and the final
+ * "Create" button is gated only on budget validity.
+ *
+ * ── SIX STEPS ────────────────────────────────────────────────────────────────
+ * 0. Concept    — Handle/name, metatype, archetype, awakened/technomancer type,
+ *                  magic tradition, gender, age.
+ *                  Metatype selection immediately adjusts attribute minimums and costs.
+ *                  Awakened category adds the quality cost and unlocks Magic/Resonance.
+ *
+ * 1. Attributes — 8 core attributes (Body/Agility/Reaction/Strength/Charisma/
+ *                  Intuition/Logic/Willpower) + Edge + Magic/Resonance (if awakened).
+ *                  Each point above racial minimum costs 10 BP.
+ *                  Racial maximums are enforced (e.g. Troll Body max 10, Edge max 4).
+ *
+ * 2. Skills     — Active skills: 4 BP per point (max 6 at chargen).
+ *                  Specializations: +2 BP each; add +2 dice for matching situations.
+ *                  Skill groups: buy all member skills at the same rank for 10 BP/rank.
+ *                  Knowledge skills: free pool = (Logic + Intuition) × 3 points.
+ *                  Languages: drawn from free knowledge pool; native languages are free.
+ *
+ * 3. Qualities  — Positive qualities cost BP (hard cap: 25 BP total). SR4A p.89.
+ *                  Negative qualities refund BP (hard cap: 35 BP total). SR4A p.89.
+ *                  Quickpick panel provides common qualities from SR4A Core.
+ *                  Custom qualities can be added with free-form name + BP cost.
+ *
+ * 4. Contacts   — Each contact costs Connection + Loyalty BP (1 BP per rating point).
+ *                  Connection (1-6) = capability/network reach;
+ *                  Loyalty (1-6) = trust/willingness to help. Total = BP cost.
+ *                  Nuyen allocation: 1 BP = 2,000¥ starting cash.
+ *
+ * 5. Review     — BP summary breakdown; validation warnings; Create Actor button.
+ *                  Disabled if over 400 BP budget OR negative quality cap exceeded.
+ *
+ * ── ACTOR CREATION ───────────────────────────────────────────────────────────
+ * _createActor() builds the full actor data payload including:
+ *   - system.attributes: all 8 attrs with { base, augmented: 0 } + edge.current
+ *   - system.skills: merged group + individual purchases via _buildSkillsPayload()
+ *   - system.awakened: tradition, adeptPoints (magic), complex forms (techno)
+ *   - system.nuyen: bpAllocated × 2000
+ *   - items: quality items (including awakened meta-quality) and contact items
+ *
+ * The actor is created with _fromSR4Wizard: true to bypass the preCreateActor hook
+ * and prevent the wizard from re-opening on the new actor.
+ *
+ * ── METATYPE DATA ─────────────────────────────────────────────────────────────
+ * METATYPE_DATA stores racial attribute ranges (SR4A p.70-71).
+ * When metatype changes, _clampAttrsToMetatype() clamps all current attr values
+ * to the new racial min/max so no invalid state persists.
+ *
+ * ── BP COMPUTATION ───────────────────────────────────────────────────────────
+ * _computeBP() is called on every render pass and returns a complete breakdown
+ * object used both for the progress bar and the Review step summary table.
+ * All state lives in this._wizardData — the class has no persistent Foundry
+ * document until _createActor() is called.
  */
 
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
 
+/**
+ * BP cost to select each metatype (SR4A p.70-71).
+ * These are flat "meta-quality" costs paid from the 400 BP budget.
+ * Human is free because all racial attribute bonuses are baked into the minimums.
+ */
 const METATYPE_BP = { human: 0, elf: 30, dwarf: 25, ork: 20, troll: 40 };
 
+/**
+ * BP cost of the Awakened/Technomancer meta-quality (SR4A p.89, 90).
+ * These qualities grant access to Magic/Resonance ratings and related skills.
+ *   magician:     Full spellcasting + conjuring + initiation
+ *   adept:        Physical adept powers (PP = Magic rating)
+ *   mysticAdept:  Both magician and adept paths — most expensive
+ *   aspected:     One magical discipline only (sorcery OR conjuring OR enchanting)
+ *   technomancer: Matrix powers via Resonance; Complex Forms instead of programs
+ */
 const AWAKENED_BP = {
   none: 0, magician: 15, adept: 10, mysticAdept: 25, aspected: 15, technomancer: 5
 };
@@ -684,6 +755,33 @@ export class CharacterWizard extends HandlebarsApplicationMixin(ApplicationV2) {
 
   // ── BP CALCULATION ───────────────────────────────────────────────────────
 
+  /**
+   * Compute the full BP breakdown for the current wizard state.
+   *
+   * Called on every render — this is the single source of truth for the BP
+   * budget display and the Review step validation.
+   *
+   * BP breakdown:
+   *   metatypeBP   — flat cost of the chosen metatype (METATYPE_BP lookup)
+   *   awakenedBP   — flat cost of awakened/technomancer quality (AWAKENED_BP lookup)
+   *   attrBP       — 10 BP per attribute point above racial minimum
+   *                   Magic/Resonance: first point free (included in awakenedBP);
+   *                   additional points cost 10 BP each above 1
+   *   skillBP      — 4 BP per active skill point + 2 BP per specialization
+   *                   + 10 BP per skill group rank
+   *   posQualBP    — sum of positive quality costs (no hard cap on spending, but
+   *                   effectively limited by the 400 BP total budget)
+   *   negQualRefund — sum of negative quality refunds, capped at 35 BP (SR4A p.89)
+   *   contactBP    — 1 BP per (Connection + Loyalty) across all contacts
+   *   nuyenBP      — 1 BP = 2,000¥ starting nuyen (optional allocation)
+   *
+   * @returns {{
+   *   metatypeBP: number, awakenedBP: number, attrBP: number, skillBP: number,
+   *   posQualBP: number, negQualTotal: number, negQualRefund: number,
+   *   negQualOverCap: boolean, contactBP: number, nuyenBP: number, nuyenValue: number,
+   *   totalSpent: number, remaining: number, overBudget: boolean
+   * }}
+   */
   _computeBP() {
     const d = this._wizardData;
     const metatype = d.concept.metatype;
@@ -743,6 +841,10 @@ export class CharacterWizard extends HandlebarsApplicationMixin(ApplicationV2) {
 
   // ── ACTOR CREATION ───────────────────────────────────────────────────────
 
+  /**
+   * Validate BP budget then trigger actor creation.
+   * Shows notification if over budget or negative quality cap exceeded.
+   */
   async _onCreateActor(event) {
     const bp = this._computeBP();
     if (bp.overBudget) {
@@ -756,6 +858,13 @@ export class CharacterWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     await this._createActor();
   }
 
+  /**
+   * Build and create the Foundry Actor document from wizard state.
+   *
+   * Constructs system data matching CharacterDataModel's schema exactly,
+   * then creates embedded quality and contact items in the same call.
+   * Passes { _fromSR4Wizard: true } to bypass the preCreateActor hook.
+   */
   async _createActor() {
     const d   = this._wizardData;
     const bp  = this._computeBP();
@@ -875,7 +984,22 @@ export class CharacterWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     }
   }
 
-  /** Merge group purchases and individual skill points into the final skills payload. */
+  /**
+   * Build the skills payload for the actor document.
+   *
+   * Merges group purchases and individual skill points into the final
+   * skills object matching CharacterDataModel.skills schema.
+   *
+   * Logic:
+   *   1. All skills initialize at { value: 0, specialization: "" }
+   *   2. Group purchases set all member skills to group rank
+   *   3. Individual purchases override if HIGHER (keeps higher of group vs individual)
+   *      This matches SR4A rule: you can't "double-buy" skills already covered by a group,
+   *      but you can exceed the group rank individually (which breaks the group).
+   *
+   * @param {object} d - Current _wizardData
+   * @returns {object} Skills payload matching CharacterDataModel.skills keys
+   */
   _buildSkillsPayload(d) {
     const payload = {};
     for (const key of ALL_SKILL_KEYS) {

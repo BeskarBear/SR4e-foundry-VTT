@@ -1,14 +1,29 @@
 /**
- * SR4 Dice Pool Builder Dialog
+ * @file pool-builder.mjs — SR4 Dice Pool Builder Dialog.
  *
- * Interactive dialog for constructing a dice pool from skill + attribute +
- * modifiers, then rolling or buying hits.
+ * Interactive dialog for assembling a SR4 dice pool from skill + attribute +
+ * situational modifiers, then rolling or buying hits.
+ *
+ * ── SR4 POOL ASSEMBLY (SR4A p.62-64) ─────────────────────────────────────────
+ * A dice pool = skill rating + linked attribute + modifiers.
+ *   Trained skill (value > 0): pool = skill + attribute
+ *   Defaulting (value = 0):    pool = attribute − 1 (no skill penalty)
+ *   Specialization match:      pool += 2 (only when the spec applies)
+ *   Wound modifier:            pool -= (condition damage penalty)
+ *   Other modifiers:           ±dice from equipment, environment, magic, etc.
+ *
+ * ── BUY HITS (SR4A p.64) ──────────────────────────────────────────────────────
+ * Instead of rolling, a character may "buy" hits at 1 hit per 4 dice in the pool.
+ * No glitch risk when buying hits. Only possible when not opposed/under time pressure.
+ *
+ * ── RULE OF SIX / EDGE ────────────────────────────────────────────────────────
+ * In SR4, the Rule of Six only activates when spending Edge.
+ * Normal rolls: each 5 or 6 counts as 1 hit; no re-roll.
+ * Edge spending: each 6 is a hit AND re-rolled; chain continues until no 6s remain.
  *
  * Usage:
- *   // From a sheet or macro — actor is optional
  *   const result = await PoolBuilderDialog.show({ actor, skill: "pistols", label: "Attack" });
- *
- *   // Returns: { pool, hits, isGlitch, isCritGlitch } or null if cancelled.
+ *   // Returns SR4Roll result object, or null if cancelled.
  */
 
 import { SR4Roll } from "../dice/sr4-roll.mjs";
