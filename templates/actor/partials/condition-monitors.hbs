@@ -1,0 +1,25 @@
+{{!-- Condition Monitor boxes --}}
+<div class="condition-monitors">
+  <h3 class="section-header">Condition Monitors</h3>
+
+  <div class="cm-row">
+    <div class="cm-track">
+      <label>Physical
+        <span class="cm-fraction">{{system.condition.physical.value}}/{{derived.physCMMax}}</span>
+      </label>
+      <div class="cm-boxes">
+        {{cmBoxes monitor="physical" value=system.condition.physical.value max=derived.physCMMax}}
+      </div>
+    </div>
+
+    <div class="cm-track">
+      <label>Stun
+        <span class="cm-fraction">{{system.condition.stun.value}}/{{derived.stunCMMax}}</span>
+      </label>
+      <div class="cm-boxes">
+        {{cmBoxes monitor="stun" value=system.condition.stun.value max=derived.stunCMMax}}
+      </div>
+    </div>
+  </div>
+
+</div>

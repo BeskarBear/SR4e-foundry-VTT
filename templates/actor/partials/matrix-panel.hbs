@@ -1,0 +1,102 @@
+{{!-- Matrix panel — commlink/Living Persona + programs --}}
+
+{{#if system.isTechnomancer}}
+{{!-- ── TECHNOMANCER: LIVING PERSONA ──────────────────────────────────────── --}}
+<div class="matrix-persona living-persona">
+  <h3>Living Persona</h3>
+  <div class="persona-attrs">
+    <div class="persona-attr" title="Response = Intuition">
+      <label>Response</label><span>{{livingPersona.response}}</span>
+    </div>
+    <div class="persona-attr" title="Signal = Resonance + 2">
+      <label>Signal</label><span>{{livingPersona.signal}}</span>
+    </div>
+    <div class="persona-attr" title="System = Logic">
+      <label>System</label><span>{{livingPersona.system}}</span>
+    </div>
+    <div class="persona-attr" title="Firewall = Willpower">
+      <label>Firewall</label><span>{{livingPersona.firewall}}</span>
+    </div>
+  </div>
+
+  <h4>Complex Forms</h4>
+  {{#each system.techno.complexForms as |cf i|}}
+  <div class="complex-form">
+    <input type="text" name="system.techno.complexForms.{{i}}.name" value="{{cf.name}}" placeholder="Name" />
+    <input type="text" name="system.techno.complexForms.{{i}}.target" value="{{cf.target}}" placeholder="Target" />
+    <input type="text" name="system.techno.complexForms.{{i}}.fading" value="{{cf.fading}}" placeholder="Fading" />
+  </div>
+  {{/each}}
+</div>
+
+{{else}}
+{{!-- ── DECKER: COMMLINK ────────────────────────────────────────────────── --}}
+<div class="matrix-persona commlink">
+  <h3>Commlink: <input type="text" name="system.matrix.commlink.name" value="{{system.matrix.commlink.name}}" placeholder="Model" /></h3>
+  <div class="persona-attrs">
+    <div class="persona-attr">
+      <label>Response</label>
+      <input type="number" name="system.matrix.commlink.response" value="{{system.matrix.commlink.response}}" min="1" max="6" />
+    </div>
+    <div class="persona-attr">
+      <label>Signal</label>
+      <input type="number" name="system.matrix.commlink.signal" value="{{system.matrix.commlink.signal}}" min="1" max="9" />
+    </div>
+    <div class="persona-attr">
+      <label>System</label>
+      <input type="number" name="system.matrix.commlink.system" value="{{system.matrix.commlink.system}}" min="1" max="6" />
+    </div>
+    <div class="persona-attr">
+      <label>Firewall</label>
+      <input type="number" name="system.matrix.commlink.firewall" value="{{system.matrix.commlink.firewall}}" min="1" max="6" />
+    </div>
+  </div>
+
+  <div class="vr-mode">
+    <label>Mode</label>
+    <select name="system.matrix.vrMode">
+      <option value="ar"      {{#if (eq system.matrix.vrMode "ar"     )}}selected{{/if}}>AR</option>
+      <option value="coldSim" {{#if (eq system.matrix.vrMode "coldSim")}}selected{{/if}}>Cold Sim VR</option>
+      <option value="hotSim"  {{#if (eq system.matrix.vrMode "hotSim" )}}selected{{/if}}>Hot Sim VR</option>
+    </select>
+    {{#if (eq system.matrix.vrMode "hotSim")}}
+    <span class="hot-sim-warning">⚠ Physical damage on crash</span>
+    {{/if}}
+  </div>
+</div>
+{{/if}}
+
+{{!-- ── PROGRAMS ─────────────────────────────────────────────────────────── --}}
+<div class="programs-section">
+  <h3>Programs
+    <a class="item-create" data-type="program" title="Add Program">+</a>
+  </h3>
+  <table class="gear-table programs-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Rating</th>
+        <th>Active</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each programs as |p|}}
+      <tr class="item {{#unless p.system.active}}inactive{{/unless}}" data-item-id="{{p.id}}">
+        <td><span class="item-name">{{p.name}}</span></td>
+        <td>{{p.system.programType}}</td>
+        <td>{{p.system.rating}}</td>
+        <td>
+          <input type="checkbox" data-item-id="{{p.id}}"
+            class="program-active-toggle"
+            {{#if p.system.active}}checked{{/if}} />
+        </td>
+        <td class="item-controls">
+          <a class="item-delete" title="Delete">✕</a>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

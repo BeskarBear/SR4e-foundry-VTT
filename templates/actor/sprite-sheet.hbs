@@ -1,0 +1,142 @@
+{{!-- SR4 Sprite Sheet --}}
+<form class="sr4-sheet sr4-sprite-sheet" autocomplete="off">
+
+  <header class="sheet-header">
+    <div class="portrait-wrap">
+      <img class="actor-portrait" src="{{actor.img}}" data-action="editImage" data-edit="img" title="{{actor.name}}" />
+    </div>
+    <div class="header-fields">
+      <input class="charname" type="text" name="name" value="{{actor.name}}" placeholder="Sprite Name" />
+      <div class="header-row">
+        <label>Type</label>
+        <select name="system.spriteType">
+          {{#each spriteTypeChoices as |label key|}}
+          <option value="{{key}}" {{#if (eq ../system.spriteType key)}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="header-row">
+        <label>Level</label>
+        <input type="number" name="system.level" value="{{system.level}}" min="1" max="12" class="level-input" />
+        <label>Compiler</label>
+        <input type="text" name="system.compiler" value="{{system.compiler}}" placeholder="Technomancer" />
+      </div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="stats"  data-action="tab" data-group="primary">Stats</a>
+    <a class="item"        data-tab="notes"  data-action="tab" data-group="primary">Notes</a>
+  </nav>
+
+  <section class="sheet-body">
+
+    {{!-- STATS TAB --}}
+    <div class="tab active" data-tab="stats" data-group="primary">
+
+      {{!-- Matrix Attributes --}}
+      <div class="sprite-attrs">
+        <h3>Matrix Attributes <span class="hint">(Level = {{system.level}})</span></h3>
+        <div class="attr-grid matrix-attrs">
+          <div class="attr-cell">
+            <label>RSP</label>
+            <span class="attr-value">{{matrixAttrs.response}}</span>
+            <input type="number" name="system.attrOffsets.response" value="{{system.attrOffsets.response}}" class="attr-offset" title="Offset from Level" />
+          </div>
+          <div class="attr-cell">
+            <label>SIG</label>
+            <span class="attr-value">{{matrixAttrs.signal}}</span>
+            <input type="number" name="system.attrOffsets.signal" value="{{system.attrOffsets.signal}}" class="attr-offset" />
+          </div>
+          <div class="attr-cell">
+            <label>SYS</label>
+            <span class="attr-value">{{matrixAttrs.system}}</span>
+            <input type="number" name="system.attrOffsets.system" value="{{system.attrOffsets.system}}" class="attr-offset" />
+          </div>
+          <div class="attr-cell">
+            <label>FWL</label>
+            <span class="attr-value">{{matrixAttrs.firewall}}</span>
+            <input type="number" name="system.attrOffsets.firewall" value="{{system.attrOffsets.firewall}}" class="attr-offset" />
+          </div>
+          <div class="attr-cell">
+            <label>BOD</label>
+            <span class="attr-value">{{matrixAttrs.body}}</span>
+            <input type="number" name="system.attrOffsets.body" value="{{system.attrOffsets.body}}" class="attr-offset" />
+          </div>
+          <div class="attr-cell">
+            <label>AGI</label>
+            <span class="attr-value">{{matrixAttrs.agility}}</span>
+            <input type="number" name="system.attrOffsets.agility" value="{{system.attrOffsets.agility}}" class="attr-offset" />
+          </div>
+        </div>
+        <p class="attr-hint">Offset = attribute − Level. Set per sprite type table (SR4A).</p>
+      </div>
+
+      {{!-- Matrix Condition Monitor --}}
+      <div class="condition-monitors">
+        <div class="cm-track">
+          <label>Matrix CM
+            <span class="cm-fraction">{{system.condition.matrix.value}}/{{matrixCMMax}}</span>
+          </label>
+          <div class="cm-boxes">
+            {{cmBoxes monitor="matrix" value=system.condition.matrix.value max=matrixCMMax}}
+          </div>
+        </div>
+      </div>
+
+      {{!-- Registration --}}
+      <div class="sprite-registration">
+        <h3>Registration</h3>
+        <div class="binding-row">
+          <label>Registered</label>
+          <input type="checkbox" name="system.registered" {{#if system.registered}}checked{{/if}} />
+          <label>Services</label>
+          <input type="number" name="system.services" value="{{system.services}}" min="0" class="services-input" />
+        </div>
+      </div>
+
+      {{!-- Quick Rolls --}}
+      <div class="sprite-rolls">
+        <h3>Quick Rolls</h3>
+        <div class="pool-grid">
+          <div class="pool-row">
+            <span>Initiative</span>
+            <span class="pool-value">{{matrixAttrs.response}} + 1d6</span>
+            <a class="pool-roll" data-pool="{{matrixAttrs.response}}" data-label="Sprite Initiative">⚄</a>
+          </div>
+          <div class="pool-row">
+            <span>Cybercombat</span>
+            <span class="pool-value">{{combatPool}}</span>
+            <a class="pool-roll" data-pool="{{combatPool}}" data-label="Sprite Cybercombat">⚄</a>
+          </div>
+          <div class="pool-row">
+            <span>Stealth</span>
+            <span class="pool-value">{{system.level}}</span>
+            <a class="pool-roll" data-pool="{{system.level}}" data-label="Sprite Stealth (Level)">⚄</a>
+          </div>
+        </div>
+      </div>
+
+      {{!-- Powers --}}
+      <div class="sprite-powers">
+        <h3>Powers <a class="power-add" title="Add Power">+</a></h3>
+        {{#each system.powers as |power idx|}}
+        <div class="power-row">
+          <input type="text" name="system.powers.{{idx}}" value="{{power}}" placeholder="Power name" />
+          <a class="power-delete" data-idx="{{idx}}" title="Remove">✕</a>
+        </div>
+        {{/each}}
+      </div>
+
+    </div>{{!-- /stats --}}
+
+    {{!-- NOTES TAB --}}
+    <div class="tab" data-tab="notes" data-group="primary">
+      <div class="notes-body">
+        {{{enrichedNotes}}}
+        <textarea name="system.notes" class="notes-editor">{{system.notes}}</textarea>
+      </div>
+    </div>
+
+  </section>
+</form>

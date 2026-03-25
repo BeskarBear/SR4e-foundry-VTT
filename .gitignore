@@ -1,0 +1,21 @@
+# LevelDB files — all excluded in public release
+# Pack data (.ldb) must not be committed: it would contain copyrighted book content.
+# Populate compendiums locally from your own sourcebooks; do not commit the results.
+packs/*/LOCK
+packs/*/LOG
+packs/*/LOG.old
+packs/*/*.log
+packs/**/*.ldb
+packs/**/MANIFEST-*
+packs/**/CURRENT
+
+# Editor / OS
+.DS_Store
+*.bak
+*.swp
+*~
+.vscode/
+.idea/
+
+# Node (if ever added)
+node_modules/

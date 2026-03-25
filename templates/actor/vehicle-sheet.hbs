@@ -1,0 +1,198 @@
+{{!-- SR4 Vehicle / Drone Sheet --}}
+<form class="sr4-sheet sr4-vehicle-sheet" autocomplete="off">
+
+  <header class="sheet-header">
+    <div class="portrait-wrap">
+      <img class="actor-portrait" src="{{actor.img}}" data-action="editImage" data-edit="img" title="{{actor.name}}" />
+    </div>
+    <div class="header-fields">
+      <input class="charname" type="text" name="name" value="{{actor.name}}" placeholder="Vehicle Name" />
+      <div class="header-row">
+        <label>Type</label>
+        <select name="system.vehicleType">
+          {{#each vehicleTypeChoices as |label key|}}
+          <option value="{{key}}" {{#if (eq ../system.vehicleType key)}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+        <label>Model</label>
+        <input type="text" name="system.model" value="{{system.model}}" placeholder="Model" />
+      </div>
+      <div class="header-row">
+        <label>Owner</label>
+        <input type="text" name="system.owner" value="{{system.owner}}" placeholder="Owner / Rigger" />
+        <label>Avail</label>
+        <input type="text" name="system.avail" value="{{system.avail}}" class="avail-input" placeholder="8R" />
+        <label>¥</label>
+        <input type="number" name="system.cost" value="{{system.cost}}" min="0" class="cost-input" />
+      </div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="stats"   data-action="tab" data-group="primary">Stats</a>
+    <a class="item"        data-tab="weapons" data-action="tab" data-group="primary">Weapons</a>
+    <a class="item"        data-tab="notes"   data-action="tab" data-group="primary">Notes</a>
+  </nav>
+
+  <section class="sheet-body">
+
+    {{!-- STATS TAB --}}
+    <div class="tab active" data-tab="stats" data-group="primary">
+
+      {{!-- Vehicle Attributes --}}
+      <div class="vehicle-attrs">
+        <h3>Attributes</h3>
+        <div class="vehicle-attr-grid">
+          <div class="vattr-row">
+            <label>Handling</label>
+            <input type="number" name="system.attributes.handling" value="{{system.attributes.handling}}" min="1" max="6" />
+          </div>
+          <div class="vattr-row">
+            <label>Accel (m/CT)</label>
+            <input type="number" name="system.attributes.accel" value="{{system.attributes.accel}}" min="0" />
+          </div>
+          <div class="vattr-row">
+            <label>Speed (m/CT)</label>
+            <input type="number" name="system.attributes.speed" value="{{system.attributes.speed}}" min="0" />
+          </div>
+          <div class="vattr-row">
+            <label>Pilot</label>
+            <input type="number" name="system.attributes.pilot" value="{{system.attributes.pilot}}" min="1" max="6" />
+          </div>
+          <div class="vattr-row">
+            <label>Body</label>
+            <input type="number" name="system.attributes.body" value="{{system.attributes.body}}" min="1" max="20" />
+          </div>
+          <div class="vattr-row">
+            <label>Armor</label>
+            <input type="number" name="system.attributes.armor" value="{{system.attributes.armor}}" min="0" />
+          </div>
+          <div class="vattr-row">
+            <label>Sensor</label>
+            <input type="number" name="system.attributes.sensor" value="{{system.attributes.sensor}}" min="1" max="6" />
+          </div>
+          <div class="vattr-row">
+            <label>Seating</label>
+            <input type="number" name="system.attributes.seating" value="{{system.attributes.seating}}" min="0" />
+          </div>
+        </div>
+      </div>
+
+      {{!-- Condition Monitor --}}
+      <div class="condition-monitors">
+        <div class="cm-track">
+          <label>Vehicle Damage
+            <span class="cm-fraction">{{system.condition.value}}/{{conditionMax}}</span>
+          </label>
+          <div class="cm-boxes">
+            {{cmBoxes monitor="condition" value=system.condition.value max=conditionMax}}
+          </div>
+        </div>
+      </div>
+
+      {{!-- Rigger Interface --}}
+      <div class="vehicle-rigger">
+        <h3>Rigger / Drone</h3>
+        <div class="binding-row">
+          <label>Rigger Interface</label>
+          <input type="checkbox" name="system.riggerInterface" {{#if system.riggerInterface}}checked{{/if}} />
+          <label>Drone Rating</label>
+          <input type="number" name="system.droneRating" value="{{system.droneRating}}" min="0" max="6" class="drone-rating-input" />
+        </div>
+      </div>
+
+      {{!-- Quick Rolls --}}
+      <div class="vehicle-rolls">
+        <h3>Quick Rolls</h3>
+        <div class="pool-grid">
+          <div class="pool-row">
+            <span>Pilot Test</span>
+            <span class="pool-value">{{pilotPool}} <span class="hint">(Pilot + Handling)</span></span>
+            <a class="pool-roll" data-pool="{{pilotPool}}" data-label="Pilot Test">⚄</a>
+          </div>
+          <div class="pool-row">
+            <span>Sensor</span>
+            <span class="pool-value">{{system.attributes.sensor}}</span>
+            <a class="pool-roll" data-pool="{{system.attributes.sensor}}" data-label="Sensor Test">⚄</a>
+          </div>
+          {{#if system.droneRating}}
+          <div class="pool-row">
+            <span>Drone Autosofts</span>
+            <span class="pool-value">{{system.droneRating}}</span>
+            <a class="pool-roll" data-pool="{{system.droneRating}}" data-label="Drone Combat">⚄</a>
+          </div>
+          {{/if}}
+        </div>
+      </div>
+
+      {{!-- Modifications --}}
+      <div class="vehicle-mods">
+        <h3>Modifications <a class="mod-add" title="Add Modification">+</a></h3>
+        {{#each system.modifications as |mod idx|}}
+        <div class="mod-row">
+          <input type="text" name="system.modifications.{{idx}}.name" value="{{mod.name}}" placeholder="Modification name" class="mod-name" />
+          <input type="text" name="system.modifications.{{idx}}.notes" value="{{mod.notes}}" placeholder="Notes" class="mod-notes" />
+          <a class="mod-delete" data-idx="{{idx}}" title="Remove">✕</a>
+        </div>
+        {{/each}}
+      </div>
+
+    </div>{{!-- /stats --}}
+
+    {{!-- WEAPONS TAB --}}
+    <div class="tab" data-tab="weapons" data-group="primary">
+
+      {{!-- Mounted Weapons (inline data on vehicle) --}}
+      <div class="vehicle-weapon-mounts">
+        <h3>Weapon Mounts <a class="weapon-mount-add" title="Add Mount">+</a></h3>
+        {{#each system.weapons as |mount idx|}}
+        <div class="mount-row">
+          <input type="text" name="system.weapons.{{idx}}.name" value="{{mount.name}}" placeholder="Weapon name" class="mount-name" />
+          <select name="system.weapons.{{idx}}.mountType">
+            <option value="fixed"     {{#if (eq mount.mountType "fixed")}}selected{{/if}}>Fixed</option>
+            <option value="turret"    {{#if (eq mount.mountType "turret")}}selected{{/if}}>Turret</option>
+            <option value="concealed" {{#if (eq mount.mountType "concealed")}}selected{{/if}}>Concealed</option>
+          </select>
+          <label>Ammo</label>
+          <input type="number" name="system.weapons.{{idx}}.ammo" value="{{mount.ammo}}" min="0" class="ammo-input" />
+          <a class="weapon-mount-delete" data-idx="{{idx}}" title="Remove">✕</a>
+        </div>
+        {{/each}}
+      </div>
+
+      {{!-- Embedded Weapon Items --}}
+      {{#if weapons.length}}
+      <div class="embedded-weapons">
+        <h3>Weapon Items</h3>
+        {{#each weapons as |w|}}
+        <div class="item" data-item-id="{{w.id}}">
+          <span class="item-name">{{w.name}}</span>
+          <span class="item-stat">{{w.system.dv}}</span>
+          <span class="item-stat">AP {{w.system.ap}}</span>
+          <a class="item-delete" title="Delete">✕</a>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{!-- Gear --}}
+      <h3>Gear <a class="item-create" data-type="gear" title="Add Gear">+</a></h3>
+      {{#each gear as |g|}}
+      <div class="item" data-item-id="{{g.id}}">
+        <span class="item-name">{{g.name}}</span>
+        <a class="item-delete" title="Delete">✕</a>
+      </div>
+      {{/each}}
+
+    </div>{{!-- /weapons --}}
+
+    {{!-- NOTES TAB --}}
+    <div class="tab" data-tab="notes" data-group="primary">
+      <div class="notes-body">
+        {{{enrichedNotes}}}
+        <textarea name="system.notes" class="notes-editor">{{system.notes}}</textarea>
+      </div>
+    </div>
+
+  </section>
+</form>

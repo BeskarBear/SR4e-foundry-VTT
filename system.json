@@ -1,0 +1,66 @@
+{
+  "id": "sr4",
+  "title": "Shadowrun 4th Edition",
+  "description": "An unofficial Foundry VTT game system for Shadowrun 4th Edition (20th Anniversary). Provides the dice engine, character sheets, actor/item types, and compendium structure. Compendium packs ship empty — users populate them from their own sourcebooks. Shadowrun is a registered trademark of The Topps Company, Inc. This project is not affiliated with or endorsed by Topps or Catalyst Game Labs.",
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": "12",
+    "verified": "13"
+  },
+  "authors": [{
+    "name": "beskarbear"
+  }],
+  "esmodules": ["module/sr4.mjs"],
+  "styles": ["styles/sr4.css"],
+  "languages": [{
+    "lang": "en",
+    "name": "English",
+    "path": "lang/en.json"
+  }],
+  "documentTypes": {
+    "Actor": {
+      "character": {},
+      "npc":       {},
+      "spirit":    {},
+      "sprite":    {},
+      "vehicle":   {}
+    },
+    "Item": {
+      "weapon":     {},
+      "armor":      {},
+      "cyberware":  {},
+      "spell":      {},
+      "adeptpower": {},
+      "program":    {},
+      "quality":    {},
+      "contact":    {},
+      "gear":       {},
+      "ammo":       {}
+    }
+  },
+  "packs": [
+    { "name": "sr4-weapons",                    "label": "Weapons - SR4A Core",              "path": "packs/sr4-weapons",                    "type": "Item", "system": "sr4" },
+    { "name": "sr4-ammo",                       "label": "Ammunition - SR4A Core",           "path": "packs/sr4-ammo",                       "type": "Item", "system": "sr4" },
+    { "name": "sr4-armor",                      "label": "Armor - SR4A Core",                "path": "packs/sr4-armor",                      "type": "Item", "system": "sr4" },
+    { "name": "sr4-spells",                     "label": "Spells - SR4A Core",               "path": "packs/sr4-spells",                     "type": "Item", "system": "sr4" },
+    { "name": "sr4-qualities",                  "label": "Qualities - SR4A Core",            "path": "packs/sr4-qualities",                  "type": "Item", "system": "sr4" },
+    { "name": "sr4-cyberware",                  "label": "Cyberware - SR4A Core",            "path": "packs/sr4-cyberware",                  "type": "Item", "system": "sr4" },
+    { "name": "sr4-gear",                       "label": "Gear - SR4A Core",                 "path": "packs/sr4-gear",                       "type": "Item", "system": "sr4" },
+    { "name": "sr4-programs",                   "label": "Programs - SR4A Core",             "path": "packs/sr4-programs",                   "type": "Item", "system": "sr4" },
+    { "name": "sr4-weapons-arsenal",            "label": "Weapons - Arsenal",                "path": "packs/sr4-weapons-arsenal",            "type": "Item", "system": "sr4" },
+    { "name": "sr4-ammo-arsenal",               "label": "Ammunition - Arsenal",             "path": "packs/sr4-ammo-arsenal",               "type": "Item", "system": "sr4" },
+    { "name": "sr4-armor-arsenal",              "label": "Armor - Arsenal",                  "path": "packs/sr4-armor-arsenal",              "type": "Item", "system": "sr4" },
+    { "name": "sr4-gear-arsenal",               "label": "Gear - Arsenal",                   "path": "packs/sr4-gear-arsenal",               "type": "Item", "system": "sr4" },
+    { "name": "sr4-cyberware-augmentation",     "label": "Cyberware - Augmentation",         "path": "packs/sr4-cyberware-augmentation",     "type": "Item", "system": "sr4" },
+    { "name": "sr4-programs-unwired",           "label": "Programs - Unwired",               "path": "packs/sr4-programs-unwired",           "type": "Item", "system": "sr4" },
+    { "name": "sr4-gear-unwired",               "label": "Gear - Unwired",                   "path": "packs/sr4-gear-unwired",               "type": "Item", "system": "sr4" },
+    { "name": "sr4-gear-streetmagic",           "label": "Gear - Street Magic",              "path": "packs/sr4-gear-streetmagic",           "type": "Item", "system": "sr4" },
+    { "name": "sr4-qualities-streetmagic",      "label": "Qualities - Street Magic",         "path": "packs/sr4-qualities-streetmagic",      "type": "Item", "system": "sr4" },
+    { "name": "sr4-qualities-runnerscompanion", "label": "Qualities - Runner's Companion",   "path": "packs/sr4-qualities-runnerscompanion", "type": "Item", "system": "sr4" },
+    { "name": "sr4-gear-runnerscompanion",      "label": "Gear - Runner's Companion",        "path": "packs/sr4-gear-runnerscompanion",      "type": "Item", "system": "sr4" }
+  ],
+  "socket": false,
+  "url": "",
+  "manifest": "",
+  "download": ""
+}

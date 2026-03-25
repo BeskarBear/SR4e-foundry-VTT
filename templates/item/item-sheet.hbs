@@ -1,0 +1,617 @@
+{{!-- SR4 Generic Item Sheet — all types in one template --}}
+<form class="sr4 item-sheet sheet-{{itemType}}" autocomplete="off">
+
+  {{!-- ── HEADER ──────────────────────────────────────────────────────── --}}
+  <header class="item-sheet-header">
+    <img class="item-sheet-img" src="{{item.img}}" data-edit="img" title="{{item.name}}">
+    <div class="item-sheet-title">
+      <input class="item-sheet-name" type="text" name="name" value="{{item.name}}"
+             {{#unless editable}}disabled{{/unless}}>
+      <span class="item-sheet-type-label">{{typeLabel}}</span>
+    </div>
+  </header>
+
+  {{!-- ── BODY ─────────────────────────────────────────────────────────── --}}
+  <div class="item-sheet-body">
+
+    {{!-- ── WEAPON ────────────────────────────────────────────────────── --}}
+    {{#if (eq itemType "weapon")}}
+    <div class="item-form-grid">
+      <div class="item-form-row">
+        <label>Type</label>
+        <select name="system.weaponType" {{#unless editable}}disabled{{/unless}}>
+          <option value="ranged"  {{#if (eq system.weaponType "ranged")}}selected{{/if}}>Ranged</option>
+          <option value="melee"   {{#if (eq system.weaponType "melee")}}selected{{/if}}>Melee</option>
+          <option value="thrown"  {{#if (eq system.weaponType "thrown")}}selected{{/if}}>Thrown</option>
+          <option value="grenade" {{#if (eq system.weaponType "grenade")}}selected{{/if}}>Grenade</option>
+        </select>
+      </div>
+      <div class="item-form-row">
+        <label>Category</label>
+        <select name="system.category" {{#unless editable}}disabled{{/unless}}>
+          <option value="blades"          {{#if (eq system.category "blades")}}selected{{/if}}>Blades</option>
+          <option value="clubs"           {{#if (eq system.category "clubs")}}selected{{/if}}>Clubs</option>
+          <option value="unarmedCombat"   {{#if (eq system.category "unarmedCombat")}}selected{{/if}}>Unarmed Combat</option>
+          <option value="exoticMelee"     {{#if (eq system.category "exoticMelee")}}selected{{/if}}>Exotic Melee</option>
+          <option value="pistols"         {{#if (eq system.category "pistols")}}selected{{/if}}>Pistols</option>
+          <option value="automatics"      {{#if (eq system.category "automatics")}}selected{{/if}}>Automatics</option>
+          <option value="longarms"        {{#if (eq system.category "longarms")}}selected{{/if}}>Longarms</option>
+          <option value="heavyWeapons"    {{#if (eq system.category "heavyWeapons")}}selected{{/if}}>Heavy Weapons</option>
+          <option value="exoticRanged"    {{#if (eq system.category "exoticRanged")}}selected{{/if}}>Exotic Ranged</option>
+          <option value="throwingWeapons" {{#if (eq system.category "throwingWeapons")}}selected{{/if}}>Throwing Weapons</option>
+          <option value="grenades"        {{#if (eq system.category "grenades")}}selected{{/if}}>Grenades</option>
+          <option value="launchers"       {{#if (eq system.category "launchers")}}selected{{/if}}>Launchers</option>
+        </select>
+      </div>
+      <div class="item-form-row">
+        <label title="Damage Value (e.g. 8P, STR+2P)">DV</label>
+        <input type="text" name="system.dv" value="{{system.dv}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label title="Armor Penetration">AP</label>
+        <input type="number" name="system.ap" value="{{system.ap}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      {{#if (eq system.weaponType "ranged")}}
+      <div class="item-form-row">
+        <label title="Fire Modes (SS/SA/BF/FA)">Mode</label>
+        <input type="text" name="system.mode" value="{{system.mode}}"
+               placeholder="SA, SS/SA, SA/BF/FA…"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label title="Recoil Compensation (base)">RC</label>
+        <input type="number" name="system.rc" value="{{system.rc}}" min="0"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Ammo Capacity</label>
+        <input type="number" name="system.ammo.max" value="{{system.ammo.max}}" min="0"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Default Ammo Type</label>
+        <input type="text" name="system.ammo.type" value="{{system.ammo.type}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      {{/if}}
+      {{#if (eq system.weaponType "melee")}}
+      <div class="item-form-row">
+        <label>Reach</label>
+        <input type="number" name="system.reach" value="{{system.reach}}" min="0" max="3"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      {{/if}}
+      <div class="item-form-row">
+        <label title="Concealability — higher is easier to hide">Conceal</label>
+        <input type="number" name="system.conceal" value="{{system.conceal}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Availability</label>
+        <input type="text" name="system.avail" value="{{system.avail}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Cost (¥)</label>
+        <input type="number" name="system.cost" value="{{system.cost}}" min="0"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Source</label>
+        <input type="text" name="system.source" value="{{system.source}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Equipped</label>
+        <input type="checkbox" name="system.equipped"
+               {{#if system.equipped}}checked{{/if}}
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ── ARMOR ─────────────────────────────────────────────────────── --}}
+    {{#if (eq itemType "armor")}}
+    <div class="item-form-grid">
+      <div class="item-form-row">
+        <label title="Ballistic armor rating">Ballistic (B)</label>
+        <input type="number" name="system.armorB" value="{{system.armorB}}" min="0"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label title="Impact armor rating">Impact (I)</label>
+        <input type="number" name="system.armorI" value="{{system.armorI}}" min="0"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Availability</label>
+        <input type="text" name="system.avail" value="{{system.avail}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Cost (¥)</label>
+        <input type="number" name="system.cost" value="{{system.cost}}" min="0"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Source</label>
+        <input type="text" name="system.source" value="{{system.source}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Equipped</label>
+        <input type="checkbox" name="system.equipped"
+               {{#if system.equipped}}checked{{/if}}
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ── CYBERWARE ────────────────────────────────────────────────── --}}
+    {{#if (eq itemType "cyberware")}}
+    <div class="item-form-grid">
+      <div class="item-form-row">
+        <label>Ware Type</label>
+        <select name="system.wareType" {{#unless editable}}disabled{{/unless}}>
+          <option value="cyber"    {{#if (eq system.wareType "cyber")}}selected{{/if}}>Cyberware</option>
+          <option value="bio"      {{#if (eq system.wareType "bio")}}selected{{/if}}>Bioware</option>
+          <option value="cultured" {{#if (eq system.wareType "cultured")}}selected{{/if}}>Cultured Bioware</option>
+          <option value="nano"     {{#if (eq system.wareType "nano")}}selected{{/if}}>Nanoware</option>
+          <option value="gene"     {{#if (eq system.wareType "gene")}}selected{{/if}}>Geneware</option>
+        </select>
+      </div>
+      <div class="item-form-row">
+        <label>Grade</label>
+        <select name="system.grade" {{#unless editable}}disabled{{/unless}}>
+          <option value="used"     {{#if (eq system.grade "used")}}selected{{/if}}>Used (×1.25 Ess)</option>
+          <option value="standard" {{#if (eq system.grade "standard")}}selected{{/if}}>Standard (×1.0 Ess)</option>
+          <option value="alpha"    {{#if (eq system.grade "alpha")}}selected{{/if}}>Alpha (×0.8 Ess)</option>
+          <option value="beta"     {{#if (eq system.grade "beta")}}selected{{/if}}>Beta (×0.7 Ess)</option>
+          <option value="delta"    {{#if (eq system.grade "delta")}}selected{{/if}}>Delta (×0.5 Ess)</option>
+        </select>
+      </div>
+      <div class="item-form-row">
+        <label>Category</label>
+        <select name="system.category" {{#unless editable}}disabled{{/unless}}>
+          <option value="headware"        {{#if (eq system.category "headware")}}selected{{/if}}>Headware</option>
+          <option value="eyeware"         {{#if (eq system.category "eyeware")}}selected{{/if}}>Eyeware</option>
+          <option value="earware"         {{#if (eq system.category "earware")}}selected{{/if}}>Earware</option>
+          <option value="bodyware"        {{#if (eq system.category "bodyware")}}selected{{/if}}>Bodyware</option>
+          <option value="cyberLimb"       {{#if (eq system.category "cyberLimb")}}selected{{/if}}>Cyber Limb</option>
+          <option value="obvious"         {{#if (eq system.category "obvious")}}selected{{/if}}>Obvious Limb</option>
+          <option value="lethality"       {{#if (eq system.category "lethality")}}selected{{/if}}>Cyber Weapon</option>
+          <option value="nanotechnology"  {{#if (eq system.category "nanotechnology")}}selected{{/if}}>Nanoware</option>
+          <option value="genetechnologies"{{#if (eq system.category "genetechnologies")}}selected{{/if}}>Geneware</option>
+          <option value="bioware"         {{#if (eq system.category "bioware")}}selected{{/if}}>Bioware (other)</option>
+        </select>
+      </div>
+      <div class="item-form-row">
+        <label title="Base Essence cost at Standard grade">Base Essence</label>
+        <input type="number" name="system.essenceCost" value="{{system.essenceCost}}"
+               min="0" step="0.05" {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label title="Actual Essence cost after grade multiplier">Actual Ess Cost</label>
+        <span class="item-form-derived ess-cost">{{system.actualEssenceCost}}</span>
+      </div>
+      <div class="item-form-row">
+        <label>Capacity</label>
+        <input type="number" name="system.capacityTotal" value="{{system.capacityTotal}}"
+               min="0" {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Availability</label>
+        <input type="text" name="system.avail" value="{{system.avail}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Cost (¥)</label>
+        <input type="number" name="system.cost" value="{{system.cost}}" min="0"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Source</label>
+        <input type="text" name="system.source" value="{{system.source}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Installed</label>
+        <input type="checkbox" name="system.installed"
+               {{#if system.installed}}checked{{/if}}
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ── AMMO ─────────────────────────────────────────────────────── --}}
+    {{#if (eq itemType "ammo")}}
+    <div class="item-form-grid">
+      <div class="item-form-row">
+        <label>Ammo Type</label>
+        <input type="text" name="system.ammoType" value="{{system.ammoType}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Quantity</label>
+        <input type="number" name="system.quantity" value="{{system.quantity}}" min="0"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>DV Modifier</label>
+        <input type="number" name="system.dvModifier" value="{{system.dvModifier}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>AP Modifier</label>
+        <input type="number" name="system.apModifier" value="{{system.apModifier}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Damage Override</label>
+        <select name="system.damageTypeOverride" {{#unless editable}}disabled{{/unless}}>
+          <option value="none"     {{#if (eq system.damageTypeOverride "none")}}selected{{/if}}>— none —</option>
+          <option value="stun"     {{#if (eq system.damageTypeOverride "stun")}}selected{{/if}}>Stun</option>
+          <option value="physical" {{#if (eq system.damageTypeOverride "physical")}}selected{{/if}}>Physical</option>
+        </select>
+      </div>
+      <div class="item-form-row">
+        <label title="Rounds per package">Per Rounds</label>
+        <input type="number" name="system.perRounds" value="{{system.perRounds}}" min="1"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Availability</label>
+        <input type="text" name="system.avail" value="{{system.avail}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Cost (¥/pack)</label>
+        <input type="number" name="system.cost" value="{{system.cost}}" min="0"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Electric (EMP/Stun)</label>
+        <input type="checkbox" name="system.isElectric"
+               {{#if system.isElectric}}checked{{/if}}
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>No Autofire (APDS)</label>
+        <input type="checkbox" name="system.noAutofire"
+               {{#if system.noAutofire}}checked{{/if}}
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Tracer Bonus</label>
+        <input type="checkbox" name="system.tracerBonus"
+               {{#if system.tracerBonus}}checked{{/if}}
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ── SPELL ─────────────────────────────────────────────────────── --}}
+    {{#if (eq itemType "spell")}}
+    <div class="item-form-grid">
+      <div class="item-form-row">
+        <label>Category</label>
+        <select name="system.category" {{#unless editable}}disabled{{/unless}}>
+          <option value="Combat"       {{#if (eq system.category "Combat")}}selected{{/if}}>Combat</option>
+          <option value="Detection"    {{#if (eq system.category "Detection")}}selected{{/if}}>Detection</option>
+          <option value="Health"       {{#if (eq system.category "Health")}}selected{{/if}}>Health</option>
+          <option value="Illusion"     {{#if (eq system.category "Illusion")}}selected{{/if}}>Illusion</option>
+          <option value="Manipulation" {{#if (eq system.category "Manipulation")}}selected{{/if}}>Manipulation</option>
+        </select>
+      </div>
+      <div class="item-form-row">
+        <label>Type</label>
+        <input type="text" name="system.spellType" value="{{system.spellType}}"
+               placeholder="Direct / Indirect / Physical / Mana…"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Range</label>
+        <input type="text" name="system.range" value="{{system.range}}"
+               placeholder="LOS, Touch, Self, LOS (A)…"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Damage Type</label>
+        <select name="system.damageType" {{#unless editable}}disabled{{/unless}}>
+          <option value="none"     {{#if (eq system.damageType "none")}}selected{{/if}}>None</option>
+          <option value="physical" {{#if (eq system.damageType "physical")}}selected{{/if}}>Physical</option>
+          <option value="stun"     {{#if (eq system.damageType "stun")}}selected{{/if}}>Stun</option>
+        </select>
+      </div>
+      <div class="item-form-row">
+        <label>Duration</label>
+        <input type="text" name="system.duration" value="{{system.duration}}"
+               placeholder="Instant / Sustained / Permanent"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Drain Code</label>
+        <input type="text" name="system.drain" value="{{system.drain}}"
+               placeholder="(F÷2)+2"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Source</label>
+        <input type="text" name="system.source" value="{{system.source}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Sustained</label>
+        <input type="checkbox" name="system.sustained"
+               {{#if system.sustained}}checked{{/if}}
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ── ADEPT POWER ──────────────────────────────────────────────── --}}
+    {{#if (eq itemType "adeptpower")}}
+    <div class="item-form-grid">
+      <div class="item-form-row">
+        <label>PP Cost / Level</label>
+        <input type="number" name="system.ppCost" value="{{system.ppCost}}"
+               min="0.25" step="0.25"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Levels Purchased</label>
+        <input type="number" name="system.levels" value="{{system.levels}}" min="1"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Is Leveled</label>
+        <input type="checkbox" name="system.isLeveled"
+               {{#if system.isLeveled}}checked{{/if}}
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Total PP Cost</label>
+        <span class="item-form-derived">{{system.totalPP}}</span>
+      </div>
+      <div class="item-form-row">
+        <label>Action Type</label>
+        <select name="system.action" {{#unless editable}}disabled{{/unless}}>
+          <option value="passive" {{#if (eq system.action "passive")}}selected{{/if}}>Passive</option>
+          <option value="free"    {{#if (eq system.action "free")}}selected{{/if}}>Free</option>
+          <option value="simple"  {{#if (eq system.action "simple")}}selected{{/if}}>Simple</option>
+          <option value="complex" {{#if (eq system.action "complex")}}selected{{/if}}>Complex</option>
+        </select>
+      </div>
+      <div class="item-form-row">
+        <label>Source</label>
+        <input type="text" name="system.source" value="{{system.source}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ── PROGRAM ───────────────────────────────────────────────────── --}}
+    {{#if (eq itemType "program")}}
+    <div class="item-form-grid">
+      <div class="item-form-row">
+        <label>Program Type</label>
+        <select name="system.programType" {{#unless editable}}disabled{{/unless}}>
+          <option value="commonUse" {{#if (eq system.programType "commonUse")}}selected{{/if}}>Common Use</option>
+          <option value="hacking"   {{#if (eq system.programType "hacking")}}selected{{/if}}>Hacking</option>
+          <option value="security"  {{#if (eq system.programType "security")}}selected{{/if}}>Security / IC</option>
+          <option value="agent"     {{#if (eq system.programType "agent")}}selected{{/if}}>Agent</option>
+          <option value="tactical"  {{#if (eq system.programType "tactical")}}selected{{/if}}>Tactical</option>
+          <option value="other"     {{#if (eq system.programType "other")}}selected{{/if}}>Other</option>
+        </select>
+      </div>
+      <div class="item-form-row">
+        <label>Rating</label>
+        <input type="number" name="system.rating" value="{{system.rating}}" min="1" max="6"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Linked Skill</label>
+        <input type="text" name="system.linkedSkill" value="{{system.linkedSkill}}"
+               placeholder="hacking, cybercombat…"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Pool Bonus</label>
+        <input type="number" name="system.poolBonus" value="{{system.poolBonus}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Availability</label>
+        <input type="text" name="system.avail" value="{{system.avail}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Cost (¥)</label>
+        <input type="number" name="system.cost" value="{{system.cost}}" min="0"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Source</label>
+        <input type="text" name="system.source" value="{{system.source}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Currently Running</label>
+        <input type="checkbox" name="system.active"
+               {{#if system.active}}checked{{/if}}
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ── QUALITY ───────────────────────────────────────────────────── --}}
+    {{#if (eq itemType "quality")}}
+    <div class="item-form-grid">
+      <div class="item-form-row">
+        <label>Type</label>
+        <select name="system.qualityType" {{#unless editable}}disabled{{/unless}}>
+          <option value="positive" {{#if (eq system.qualityType "positive")}}selected{{/if}}>Positive</option>
+          <option value="negative" {{#if (eq system.qualityType "negative")}}selected{{/if}}>Negative</option>
+        </select>
+      </div>
+      <div class="item-form-row">
+        <label>BP Cost</label>
+        <input type="number" name="system.bpCost" value="{{system.bpCost}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Level</label>
+        <input type="number" name="system.level" value="{{system.level}}" min="1"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Is Leveled</label>
+        <input type="checkbox" name="system.isLeveled"
+               {{#if system.isLeveled}}checked{{/if}}
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Source</label>
+        <input type="text" name="system.source" value="{{system.source}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ── CONTACT ───────────────────────────────────────────────────── --}}
+    {{#if (eq itemType "contact")}}
+    <div class="item-form-grid">
+      <div class="item-form-row">
+        <label>Connection</label>
+        <input type="number" name="system.connection" value="{{system.connection}}"
+               min="1" max="6" {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Loyalty</label>
+        <input type="number" name="system.loyalty" value="{{system.loyalty}}"
+               min="1" max="6" {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>BP Cost</label>
+        <span class="item-form-derived">{{system.bpCost}}</span>
+      </div>
+      <div class="item-form-row">
+        <label>Role / Archetype</label>
+        <input type="text" name="system.role" value="{{system.role}}"
+               placeholder="Fixer, Street Doc, Corp Exec…"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Affiliation</label>
+        <input type="text" name="system.affiliation" value="{{system.affiliation}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Location</label>
+        <input type="text" name="system.location" value="{{system.location}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>How You Met</label>
+        <input type="text" name="system.how" value="{{system.how}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ── GEAR ──────────────────────────────────────────────────────── --}}
+    {{#if (eq itemType "gear")}}
+    <div class="item-form-grid">
+      <div class="item-form-row">
+        <label>Category</label>
+        <select name="system.category" {{#unless editable}}disabled{{/unless}}>
+          <option value="electronics"  {{#if (eq system.category "electronics")}}selected{{/if}}>Electronics</option>
+          <option value="commlink"     {{#if (eq system.category "commlink")}}selected{{/if}}>Commlink</option>
+          <option value="software"     {{#if (eq system.category "software")}}selected{{/if}}>Software</option>
+          <option value="surveillance" {{#if (eq system.category "surveillance")}}selected{{/if}}>Surveillance</option>
+          <option value="breaking"     {{#if (eq system.category "breaking")}}selected{{/if}}>Breaking & Entering</option>
+          <option value="medical"      {{#if (eq system.category "medical")}}selected{{/if}}>Medical</option>
+          <option value="disguise"     {{#if (eq system.category "disguise")}}selected{{/if}}>Disguise</option>
+          <option value="explosives"   {{#if (eq system.category "explosives")}}selected{{/if}}>Explosives</option>
+          <option value="survival"     {{#if (eq system.category "survival")}}selected{{/if}}>Survival</option>
+          <option value="docsForgery"  {{#if (eq system.category "docsForgery")}}selected{{/if}}>Docs / Forgery</option>
+          <option value="credstick"    {{#if (eq system.category "credstick")}}selected{{/if}}>Credstick</option>
+          <option value="other"        {{#if (eq system.category "other")}}selected{{/if}}>Other</option>
+        </select>
+      </div>
+      <div class="item-form-row">
+        <label>Quantity</label>
+        <input type="number" name="system.quantity" value="{{system.quantity}}" min="0"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Rating</label>
+        <input type="number" name="system.rating" value="{{system.rating}}" min="0" max="12"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Availability</label>
+        <input type="text" name="system.avail" value="{{system.avail}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Cost (¥)</label>
+        <input type="number" name="system.cost" value="{{system.cost}}" min="0"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Source</label>
+        <input type="text" name="system.source" value="{{system.source}}"
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row">
+        <label>Is Commlink</label>
+        <input type="checkbox" name="system.isCommlink"
+               {{#if system.isCommlink}}checked{{/if}}
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+      {{#if system.isCommlink}}
+      <div class="item-form-row commlink-attr">
+        <label>Response</label>
+        <input type="number" name="system.commlink.response" value="{{system.commlink.response}}"
+               min="0" max="6" {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row commlink-attr">
+        <label>Signal</label>
+        <input type="number" name="system.commlink.signal" value="{{system.commlink.signal}}"
+               min="0" max="9" {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row commlink-attr">
+        <label>System</label>
+        <input type="number" name="system.commlink.system" value="{{system.commlink.system}}"
+               min="0" max="6" {{#unless editable}}disabled{{/unless}}>
+      </div>
+      <div class="item-form-row commlink-attr">
+        <label>Firewall</label>
+        <input type="number" name="system.commlink.firewall" value="{{system.commlink.firewall}}"
+               min="0" max="6" {{#unless editable}}disabled{{/unless}}>
+      </div>
+      {{/if}}
+      <div class="item-form-row">
+        <label>Equipped</label>
+        <input type="checkbox" name="system.equipped"
+               {{#if system.equipped}}checked{{/if}}
+               {{#unless editable}}disabled{{/unless}}>
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ── DESCRIPTION (all types) ─────────────────────────────────── --}}
+    <div class="item-description-section">
+      <label class="item-description-label">Description</label>
+      {{#if editable}}
+      <textarea name="system.description" class="item-description-editor">{{system.description}}</textarea>
+      {{else}}
+      <div class="item-description-view">{{{system.description}}}</div>
+      {{/if}}
+    </div>
+
+  </div>{{!-- /.item-sheet-body --}}
+</form>

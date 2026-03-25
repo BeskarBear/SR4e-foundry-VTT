@@ -1,0 +1,658 @@
+{{!-- SR4 Character Creation Wizard (400 BP) --}}
+<form class="sr4-wizard-form" autocomplete="off">
+
+  {{!-- ── STEP INDICATOR ──────────────────────────────────────────────────── --}}
+  <nav class="wizard-step-bar">
+    {{#each steps as |s|}}
+    <span class="wizard-step-nav {{#if s.active}}active{{/if}} {{#if s.past}}past{{/if}}"
+          data-step="{{s.idx}}">
+      <span class="step-num">{{s.num}}</span>
+      <span class="step-label">{{s.name}}</span>
+    </span>
+    {{/each}}
+  </nav>
+
+  {{!-- ── BP BUDGET BAR ────────────────────────────────────────────────────── --}}
+  <div class="bp-bar {{#if bp.overBudget}}over-budget{{/if}}">
+    <span class="bp-label">BP</span>
+    <div class="bp-track">
+      <div class="bp-fill" style="width: {{bpPercent}}%"></div>
+    </div>
+    <span class="bp-numbers">
+      <strong>{{bp.totalSpent}}</strong> / 400
+      {{#if bp.overBudget}}
+        <span class="bp-over-tag">OVER BUDGET</span>
+      {{else}}
+        <span class="bp-remaining-tag">{{bp.remaining}} BP left</span>
+      {{/if}}
+    </span>
+  </div>
+
+  {{!-- ── STEP PANELS ─────────────────────────────────────────────────────── --}}
+  <div class="wizard-content">
+
+    {{!-- ════════════════════════════════════════════════════════════════════
+         STEP 0 — CONCEPT
+         ════════════════════════════════════════════════════════════════════ --}}
+    {{#if (eq step 0)}}
+    <div class="wizard-step step-concept">
+      <h2 class="step-title">Concept</h2>
+
+      <div class="concept-grid">
+        <div class="concept-col">
+          <div class="field-group">
+            <label>Runner Name</label>
+            <input type="text" name="actorName" class="concept-field"
+              value="{{actorName}}" placeholder="Full name or alias" />
+          </div>
+          <div class="field-group">
+            <label>Handle <span class="field-hint">(street name)</span></label>
+            <input type="text" name="handle" class="concept-field"
+              value="{{concept.handle}}" placeholder="Ghost, Chrome, etc." />
+          </div>
+          <div class="field-group">
+            <label>Archetype</label>
+            <input type="text" name="archetype" class="concept-field"
+              value="{{concept.archetype}}" placeholder="Street Sam, Decker, Face…" />
+          </div>
+          <div class="field-group">
+            <label>Gender</label>
+            <input type="text" name="gender" class="concept-field"
+              value="{{concept.gender}}" placeholder="Optional" />
+          </div>
+          <div class="field-group">
+            <label>Age</label>
+            <input type="text" name="age" class="concept-field"
+              value="{{concept.age}}" placeholder="Optional" />
+          </div>
+        </div>
+
+        <div class="concept-col">
+          <div class="field-group">
+            <label>Metatype</label>
+            <select name="metatype" class="concept-field">
+              {{#each metatypeChoices as |m|}}
+              <option value="{{m.value}}" {{#if m.selected}}selected{{/if}}>
+                {{m.label}}{{#if m.bp}} (+{{m.bp}} BP){{/if}}
+              </option>
+              {{/each}}
+            </select>
+            {{#if metatypeSpecial}}
+            <div class="metatype-info">
+              {{#each metatypeSpecial as |trait|}}<span class="metatype-trait">{{trait}}</span>{{/each}}
+            </div>
+            {{/if}}
+          </div>
+
+          <div class="field-group">
+            <label>Awakened / Resonant Type</label>
+            <select class="awakened-select">
+              {{#each awakenedChoices as |c|}}
+              <option value="{{c.value}}" {{#if c.selected}}selected{{/if}}>
+                {{c.label}}{{#if c.bp}} (+{{c.bp}} BP){{/if}}
+              </option>
+              {{/each}}
+            </select>
+          </div>
+
+          {{#if (neq concept.awakenedCategory "none")}}
+          {{#if (neq concept.awakenedCategory "technomancer")}}
+          <div class="field-group">
+            <label>Tradition</label>
+            <input type="text" name="tradition" class="concept-field"
+              value="{{concept.tradition}}" placeholder="Hermetic, Shamanic, etc." />
+          </div>
+          {{/if}}
+          {{/if}}
+
+          <div class="concept-bp-preview">
+            <div class="bp-preview-row">
+              <span>Metatype cost:</span>
+              <span>{{bp.metatypeBP}} BP</span>
+            </div>
+            {{#if bp.awakenedBP}}
+            <div class="bp-preview-row">
+              <span>Awakened type:</span>
+              <span>{{bp.awakenedBP}} BP</span>
+            </div>
+            {{/if}}
+            <div class="bp-preview-row bp-preview-total">
+              <span>Fixed costs:</span>
+              <span>{{fixedBP}} BP</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ════════════════════════════════════════════════════════════════════
+         STEP 1 — ATTRIBUTES
+         ════════════════════════════════════════════════════════════════════ --}}
+    {{#if (eq step 1)}}
+    <div class="wizard-step step-attributes">
+      <h2 class="step-title">Attributes <span class="step-subtitle">10 BP per point above racial minimum</span></h2>
+
+      <div class="attr-wizard-grid">
+
+        <div class="attr-col">
+          <h4>Physical</h4>
+          {{#each attrPhysical as |row|}}
+          <div class="attr-wizard-row">
+            <label class="attr-wizard-label">{{row.label}}</label>
+            <span class="attr-range-hint">{{row.min}}–{{row.max}}</span>
+            <div class="attr-stepper">
+              <button type="button" class="attr-btn" data-attr="{{row.key}}" data-delta="-1"
+                {{#if row.atMin}}disabled{{/if}}>−</button>
+              <span class="attr-wizard-val {{#if row.bpCost}}attr-raised{{/if}}">{{row.value}}</span>
+              <button type="button" class="attr-btn" data-attr="{{row.key}}" data-delta="1"
+                {{#if row.atMax}}disabled{{/if}}>+</button>
+            </div>
+            {{#if row.bpCost}}<span class="attr-cost">{{row.bpCost}} BP</span>{{else}}<span class="attr-cost attr-free">free</span>{{/if}}
+          </div>
+          {{/each}}
+        </div>
+
+        <div class="attr-col">
+          <h4>Mental</h4>
+          {{#each attrMental as |row|}}
+          <div class="attr-wizard-row">
+            <label class="attr-wizard-label">{{row.label}}</label>
+            <span class="attr-range-hint">{{row.min}}–{{row.max}}</span>
+            <div class="attr-stepper">
+              <button type="button" class="attr-btn" data-attr="{{row.key}}" data-delta="-1"
+                {{#if row.atMin}}disabled{{/if}}>−</button>
+              <span class="attr-wizard-val {{#if row.bpCost}}attr-raised{{/if}}">{{row.value}}</span>
+              <button type="button" class="attr-btn" data-attr="{{row.key}}" data-delta="1"
+                {{#if row.atMax}}disabled{{/if}}>+</button>
+            </div>
+            {{#if row.bpCost}}<span class="attr-cost">{{row.bpCost}} BP</span>{{else}}<span class="attr-cost attr-free">free</span>{{/if}}
+          </div>
+          {{/each}}
+        </div>
+
+        <div class="attr-col">
+          <h4>Special</h4>
+
+          {{!-- Edge --}}
+          <div class="attr-wizard-row">
+            <label class="attr-wizard-label">{{attrEdge.label}}</label>
+            <span class="attr-range-hint">{{attrEdge.min}}–{{attrEdge.max}}</span>
+            <div class="attr-stepper">
+              <button type="button" class="attr-btn" data-attr="edge" data-delta="-1"
+                {{#if attrEdge.atMin}}disabled{{/if}}>−</button>
+              <span class="attr-wizard-val {{#if attrEdge.bpCost}}attr-raised{{/if}}">{{attrEdge.value}}</span>
+              <button type="button" class="attr-btn" data-attr="edge" data-delta="1"
+                {{#if attrEdge.atMax}}disabled{{/if}}>+</button>
+            </div>
+            {{#if attrEdge.bpCost}}<span class="attr-cost">{{attrEdge.bpCost}} BP</span>{{else}}<span class="attr-cost attr-free">free</span>{{/if}}
+          </div>
+
+          {{!-- Magic or Resonance (Awakened / TM only) --}}
+          {{#if specAttrRow}}
+          <div class="attr-wizard-row attr-special-row">
+            <label class="attr-wizard-label">{{specAttrRow.label}}</label>
+            <span class="attr-range-hint">{{specAttrRow.min}}–{{specAttrRow.max}}</span>
+            <div class="attr-stepper">
+              <button type="button" class="attr-btn" data-attr="{{specAttrRow.key}}" data-delta="-1"
+                {{#if specAttrRow.atMin}}disabled{{/if}}>−</button>
+              <span class="attr-wizard-val {{#if specAttrRow.bpCost}}attr-raised{{/if}}">{{specAttrRow.value}}</span>
+              <button type="button" class="attr-btn" data-attr="{{specAttrRow.key}}" data-delta="1"
+                {{#if specAttrRow.atMax}}disabled{{/if}}>+</button>
+            </div>
+            {{#if specAttrRow.bpCost}}<span class="attr-cost">{{specAttrRow.bpCost}} BP</span>{{else}}<span class="attr-cost attr-free">1 free</span>{{/if}}
+          </div>
+          {{/if}}
+
+          <div class="attr-legend">
+            <div>Range = racial min – natural max</div>
+            <div>10 BP per point above minimum</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="attr-bp-summary">
+        Attribute BP: <strong>{{bp.attrBP}}</strong> &nbsp;|&nbsp;
+        Fixed BP (metatype + awakened): <strong>{{fixedBP}}</strong>
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ════════════════════════════════════════════════════════════════════
+         STEP 2 — SKILLS
+         ════════════════════════════════════════════════════════════════════ --}}
+    {{#if (eq step 2)}}
+    <div class="wizard-step step-skills">
+      <h2 class="step-title">Skills <span class="step-subtitle">4 BP/rank · +2 BP/spec · Group: 10 BP/rank</span></h2>
+
+      <div class="skills-wizard-layout">
+
+        {{!-- LEFT: Skill Groups --}}
+        <div class="skill-groups-panel">
+          <h4>Skill Groups <span class="field-hint">(all group members set to rank)</span></h4>
+          {{#each skillGroupDefs as |g|}}
+          <div class="skill-group-wizard-row">
+            <div class="group-label-block">
+              <span class="group-name">{{g.name}}</span>
+              <span class="group-skills-hint">{{g.skills}}</span>
+            </div>
+            <div class="attr-stepper">
+              <button type="button" class="attr-btn" data-group="{{g.name}}" data-delta="-1"
+                {{#if (eq g.rank 0)}}disabled{{/if}}>−</button>
+              <span class="attr-wizard-val">{{g.rank}}</span>
+              <button type="button" class="attr-btn" data-group="{{g.name}}" data-delta="1"
+                {{#if (gte g.rank 4)}}disabled{{/if}}>+</button>
+            </div>
+            <span class="group-bp-cost {{#if g.rank}}active-cost{{/if}}">
+              {{#if g.rank}}{{g.groupBP}}{{else}}0{{/if}} BP
+            </span>
+          </div>
+          {{/each}}
+          <div class="group-hint">Max group rank at chargen: 4</div>
+        </div>
+
+        {{!-- RIGHT: Individual Skills --}}
+        <div class="individual-skills-panel">
+          {{#each skillGroupsTemplate as |grp|}}
+          <details class="skill-group-details" {{#if (eq grp.name "Combat")}}open{{/if}}>
+            <summary class="skill-group-summary">{{grp.name}}</summary>
+            <div class="skill-rows">
+              {{#each grp.skills as |s|}}
+              <div class="skill-wizard-row {{#if s.groupCovered}}group-covered{{/if}}">
+                <span class="skill-wizard-name" title="Linked: {{s.attrKey}}">{{s.label}}</span>
+                <span class="skill-attr-tag">{{s.attrKey}}</span>
+                <input type="number" class="skill-input" data-skill="{{s.key}}"
+                  value="{{s.value}}" min="0" max="6" />
+                <input type="text" class="skill-spec" data-skill="{{s.key}}"
+                  value="{{s.specialization}}" placeholder="Spec (+2 BP)" />
+                <span class="skill-wizard-cost {{#if s.bpCost}}active-cost{{/if}}">{{s.bpCost}}</span>
+                {{#if s.groupCovered}}
+                <span class="group-cover-badge" title="Base from skill group">G</span>
+                {{/if}}
+              </div>
+              {{/each}}
+            </div>
+          </details>
+          {{/each}}
+        </div>
+
+      </div>
+
+      {{!-- Knowledge Skills --}}
+      <div class="knowledge-section">
+        <div class="knowledge-header">
+          <h4>Knowledge &amp; Language Skills</h4>
+          <span class="knowledge-pool-status {{#if (gt usedKnowledge freeKnowledge)}}over-pool{{/if}}">
+            Free pool: {{usedKnowledge}} / {{freeKnowledge}}
+            (LOG {{logicVal}} + INT {{intuitionVal}}) × 3
+          </span>
+          <a class="add-knowledge wizard-add-btn" title="Add knowledge skill">+ Knowledge</a>
+          <a class="add-language wizard-add-btn" title="Add language">+ Language</a>
+        </div>
+
+        {{#each skills.knowledge as |k i|}}
+        <div class="knowledge-row">
+          <input type="text" class="knowledge-field" data-idx="{{i}}" data-field="name"
+            value="{{k.name}}" placeholder="Skill name" />
+          <select class="knowledge-field" data-idx="{{i}}" data-field="category">
+            <option value="street"       {{#if (eq k.category "street")      }}selected{{/if}}>Street</option>
+            <option value="academic"     {{#if (eq k.category "academic")    }}selected{{/if}}>Academic</option>
+            <option value="interest"     {{#if (eq k.category "interest")    }}selected{{/if}}>Interest</option>
+            <option value="professional" {{#if (eq k.category "professional")}}selected{{/if}}>Professional</option>
+          </select>
+          <input type="number" class="knowledge-field" data-idx="{{i}}" data-field="value"
+            value="{{k.value}}" min="1" max="12" style="width:42px" />
+          <a class="remove-knowledge" data-idx="{{i}}" title="Remove">✕</a>
+        </div>
+        {{/each}}
+
+        {{#each skills.languages as |l i|}}
+        <div class="knowledge-row language-row">
+          <span class="lang-label">🌐</span>
+          <input type="text" class="language-field" data-idx="{{i}}" data-field="name"
+            value="{{l.name}}" placeholder="Language" />
+          <label class="native-check" title="Native language (free, no pool cost)">
+            <input type="checkbox" class="language-field" data-idx="{{i}}" data-field="native"
+              {{#if l.native}}checked{{/if}} />
+            Native (free)
+          </label>
+          {{#unless l.native}}
+          <input type="number" class="language-field" data-idx="{{i}}" data-field="value"
+            value="{{l.value}}" min="1" max="12" style="width:42px" />
+          {{/unless}}
+          <a class="remove-language" data-idx="{{i}}" title="Remove">✕</a>
+        </div>
+        {{/each}}
+
+      </div>
+
+      <div class="skills-bp-total">Skills BP spent: <strong>{{bp.skillBP}}</strong></div>
+    </div>
+    {{/if}}
+
+    {{!-- ════════════════════════════════════════════════════════════════════
+         STEP 3 — QUALITIES
+         ════════════════════════════════════════════════════════════════════ --}}
+    {{#if (eq step 3)}}
+    <div class="wizard-step step-qualities">
+      <h2 class="step-title">Qualities <span class="step-subtitle">Max 35 BP refund from negatives</span></h2>
+
+      <div class="qualities-wizard-layout">
+
+        {{!-- Positive Qualities --}}
+        <div class="qualities-col">
+          <h4 class="qual-header qual-positive">
+            Positive Qualities
+            <span class="qual-bp-total">{{bp.posQualBP}} BP</span>
+          </h4>
+
+          <div class="quickpick-panel">
+            <div class="quickpick-label">Quick Pick:</div>
+            <div class="quickpick-tags">
+              {{#each posQuickpick as |q|}}
+              <span class="quickpick-quality {{#if q.selected}}selected{{/if}}"
+                    data-type="positive" data-name="{{q.name}}" data-bp="{{q.bpCost}}"
+                    title="{{q.bpCost}} BP — click to toggle">
+                {{q.name}} ({{q.bpCost}})
+              </span>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="qualities-list">
+            {{#each qualities.positive as |q i|}}
+            <div class="quality-wizard-row">
+              <input type="text" class="quality-field" data-type="positive" data-idx="{{i}}" data-field="name"
+                value="{{q.name}}" placeholder="Quality name" />
+              <input type="number" class="quality-field" data-type="positive" data-idx="{{i}}" data-field="bpCost"
+                value="{{q.bpCost}}" min="0" max="50" style="width:48px" />
+              <span class="bp-tag">BP</span>
+              <a class="remove-quality" data-type="positive" data-idx="{{i}}" title="Remove">✕</a>
+            </div>
+            {{/each}}
+          </div>
+          <a class="add-quality wizard-add-btn" data-type="positive">+ Custom Positive Quality</a>
+        </div>
+
+        {{!-- Negative Qualities --}}
+        <div class="qualities-col">
+          <h4 class="qual-header qual-negative">
+            Negative Qualities
+            <span class="qual-bp-total">
+              {{bp.negQualTotal}} BP
+              {{#if bp.negQualOverCap}}<span class="cap-warning">⚠ cap 35!</span>{{/if}}
+            </span>
+          </h4>
+
+          <div class="quickpick-panel">
+            <div class="quickpick-label">Quick Pick:</div>
+            <div class="quickpick-tags">
+              {{#each negQuickpick as |q|}}
+              <span class="quickpick-quality {{#if q.selected}}selected{{/if}}"
+                    data-type="negative" data-name="{{q.name}}" data-bp="{{q.bpCost}}"
+                    title="{{q.bpCost}} BP refund — click to toggle">
+                {{q.name}} ({{q.bpCost}})
+              </span>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="qualities-list">
+            {{#each qualities.negative as |q i|}}
+            <div class="quality-wizard-row">
+              <input type="text" class="quality-field" data-type="negative" data-idx="{{i}}" data-field="name"
+                value="{{q.name}}" placeholder="Quality name" />
+              <input type="number" class="quality-field" data-type="negative" data-idx="{{i}}" data-field="bpCost"
+                value="{{q.bpCost}}" min="0" max="50" style="width:48px" />
+              <span class="bp-tag">BP back</span>
+              <a class="remove-quality" data-type="negative" data-idx="{{i}}" title="Remove">✕</a>
+            </div>
+            {{/each}}
+          </div>
+          <a class="add-quality wizard-add-btn" data-type="negative">+ Custom Negative Quality</a>
+        </div>
+
+      </div>
+
+      {{#if bp.negQualOverCap}}
+      <div class="cap-warning-banner">
+        ⚠ Negative quality total ({{bp.negQualTotal}} BP) exceeds the 35 BP cap.
+        Only 35 BP will be credited.
+      </div>
+      {{/if}}
+
+    </div>
+    {{/if}}
+
+    {{!-- ════════════════════════════════════════════════════════════════════
+         STEP 4 — CONTACTS & RESOURCES
+         ════════════════════════════════════════════════════════════════════ --}}
+    {{#if (eq step 4)}}
+    <div class="wizard-step step-contacts">
+      <h2 class="step-title">Contacts &amp; Resources</h2>
+
+      <div class="contacts-resources-layout">
+
+        {{!-- Contacts --}}
+        <div class="contacts-panel">
+          <h4>Contacts <span class="field-hint">1 BP per (Connection + Loyalty) · Total: {{bp.contactBP}} BP</span></h4>
+          <div class="contact-header-row">
+            <span>Name &amp; Role</span>
+            <span title="Connection 1-6">Con</span>
+            <span title="Loyalty 1-6">Loy</span>
+            <span>Cost</span>
+            <span></span>
+          </div>
+          {{#each contacts as |c i|}}
+          <div class="contact-wizard-row">
+            <div class="contact-name-role">
+              <input type="text" class="contact-field" data-idx="{{i}}" data-field="name"
+                value="{{c.name}}" placeholder="Name" />
+              <input type="text" class="contact-field" data-idx="{{i}}" data-field="role"
+                value="{{c.role}}" placeholder="Role / Affiliation" style="font-size:10px;color:var(--sr4-text-muted)" />
+            </div>
+            <input type="number" class="contact-field rating-input" data-idx="{{i}}" data-field="connection"
+              value="{{c.connection}}" min="1" max="6" />
+            <input type="number" class="contact-field rating-input" data-idx="{{i}}" data-field="loyalty"
+              value="{{c.loyalty}}" min="1" max="6" />
+            <span class="contact-bp-cost">{{c.connectionPlusLoyalty}} BP</span>
+            <a class="remove-contact" data-idx="{{i}}" title="Remove">✕</a>
+          </div>
+          {{/each}}
+          <a class="add-contact wizard-add-btn">+ Add Contact</a>
+        </div>
+
+        {{!-- Resources --}}
+        <div class="resources-panel">
+          <h4>Starting Nuyen <span class="field-hint">1 BP = 2,000¥ · allocate remaining BP</span></h4>
+
+          <div class="nuyen-section">
+            <div class="nuyen-remaining-info">
+              Unallocated BP: <strong class="{{#if (lt bp.remaining 0)}}over-budget{{/if}}">{{bp.remaining}}</strong>
+            </div>
+            <div class="nuyen-input-row">
+              <label>Convert</label>
+              <input type="number" class="nuyen-input"
+                value="{{nuyen.bpAllocated}}" min="0" />
+              <span>BP →</span>
+              <span class="nuyen-result-val">{{nuyen.nuyenValue}}¥</span>
+            </div>
+            <div class="nuyen-hint">Unused BP is legal under RAW — not mandatory to convert.</div>
+          </div>
+
+          <div class="resources-ledger">
+            <h4>Full BP Ledger</h4>
+            <div class="ledger-table">
+              <span>Metatype ({{metatypeLabel}})</span>    <span>{{bp.metatypeBP}}</span>
+              {{#if bp.awakenedBP}}
+              <span>Awakened / TM Type</span>              <span>{{bp.awakenedBP}}</span>
+              {{/if}}
+              <span>Attributes</span>                      <span>{{bp.attrBP}}</span>
+              <span>Skills</span>                          <span>{{bp.skillBP}}</span>
+              <span>Positive Qualities</span>              <span>{{bp.posQualBP}}</span>
+              <span>Negative Qualities (cap 35)</span>     <span>−{{bp.negQualRefund}}</span>
+              <span>Contacts</span>                        <span>{{bp.contactBP}}</span>
+              <span>Nuyen allocation</span>                <span>{{bp.nuyenBP}}</span>
+              <span class="ledger-total">TOTAL SPENT</span>
+              <span class="ledger-total {{#if bp.overBudget}}over-budget{{/if}}">
+                {{bp.totalSpent}} / 400
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ════════════════════════════════════════════════════════════════════
+         STEP 5 — REVIEW & CREATE
+         ════════════════════════════════════════════════════════════════════ --}}
+    {{#if (eq step 5)}}
+    <div class="wizard-step step-review">
+      <h2 class="step-title">Review &amp; Create</h2>
+
+      {{#if validation.overBudget}}
+      <div class="validation-error">✗ Over 400 BP budget — reduce spending before creating.</div>
+      {{/if}}
+      {{#if validation.negQualOverCap}}
+      <div class="validation-warning">⚠ Negative quality refund exceeds 35 BP cap ({{bp.negQualTotal}} total, capped at 35).</div>
+      {{/if}}
+      {{#if validation.noName}}
+      <div class="validation-warning">⚠ No name or handle set — enter a name in Concept.</div>
+      {{/if}}
+      {{#if validation.canCreate}}
+      <div class="validation-ok">✓ Ready to jack in. {{bp.remaining}} BP unspent.</div>
+      {{/if}}
+
+      <div class="review-grid">
+
+        <div class="review-section">
+          <h4>Identity</h4>
+          <div class="review-field"><label>Name</label><span>{{actorName}}</span></div>
+          <div class="review-field"><label>Handle</label><span>{{concept.handle}}</span></div>
+          <div class="review-field"><label>Metatype</label><span>{{metatypeLabel}}</span></div>
+          <div class="review-field"><label>Archetype</label><span>{{concept.archetype}}</span></div>
+          {{#if (neq concept.awakenedCategory "none")}}
+          <div class="review-field">
+            <label>Awakened</label>
+            <span>
+              {{#each awakenedChoices as |c|}}{{#if c.selected}}{{c.label}}{{/if}}{{/each}}
+            </span>
+          </div>
+          {{#if concept.tradition}}
+          <div class="review-field"><label>Tradition</label><span>{{concept.tradition}}</span></div>
+          {{/if}}
+          {{/if}}
+        </div>
+
+        <div class="review-section">
+          <h4>Attributes</h4>
+          {{#each attrPhysical as |row|}}
+          <div class="review-attr-row">
+            <label>{{row.label}}</label>
+            <span class="review-attr-val">{{row.value}}</span>
+            {{#if row.bpCost}}<span class="review-cost">({{row.bpCost}} BP)</span>{{/if}}
+          </div>
+          {{/each}}
+          {{#each attrMental as |row|}}
+          <div class="review-attr-row">
+            <label>{{row.label}}</label>
+            <span class="review-attr-val">{{row.value}}</span>
+            {{#if row.bpCost}}<span class="review-cost">({{row.bpCost}} BP)</span>{{/if}}
+          </div>
+          {{/each}}
+          <div class="review-attr-row">
+            <label>{{attrEdge.label}}</label>
+            <span class="review-attr-val">{{attrEdge.value}}</span>
+            {{#if attrEdge.bpCost}}<span class="review-cost">({{attrEdge.bpCost}} BP)</span>{{/if}}
+          </div>
+          {{#if specAttrRow}}
+          <div class="review-attr-row special-attr">
+            <label>{{specAttrRow.label}}</label>
+            <span class="review-attr-val">{{specAttrRow.value}}</span>
+            {{#if specAttrRow.bpCost}}<span class="review-cost">({{specAttrRow.bpCost}} BP)</span>{{/if}}
+          </div>
+          {{/if}}
+        </div>
+
+        <div class="review-section review-skills">
+          <h4>Skills (non-zero)</h4>
+          {{#each skillGroupsTemplate as |grp|}}
+            {{#each grp.skills as |s|}}
+              {{#if s.effectiveValue}}
+              <div class="review-skill-row">
+                <span>{{s.label}}</span>
+                <span class="review-attr-val">{{s.effectiveValue}}</span>
+                {{#if s.specialization}}<span class="review-spec">({{s.specialization}})</span>{{/if}}
+                {{#if s.groupCovered}}<span class="group-badge">grp</span>{{/if}}
+              </div>
+              {{/if}}
+            {{/each}}
+          {{/each}}
+        </div>
+
+        <div class="review-section">
+          <h4>Qualities</h4>
+          {{#each qualities.positive as |q|}}<div class="review-quality positive"><span>+ {{q.name}}</span><span class="review-cost">{{q.bpCost}} BP</span></div>{{/each}}
+          {{#each qualities.negative as |q|}}<div class="review-quality negative"><span>− {{q.name}}</span><span class="review-cost">{{q.bpCost}} back</span></div>{{/each}}
+          {{#unless qualities.positive}}{{#unless qualities.negative}}<span class="review-empty">None selected.</span>{{/unless}}{{/unless}}
+        </div>
+
+        {{#if contacts.length}}
+        <div class="review-section">
+          <h4>Contacts</h4>
+          {{#each contacts as |c|}}
+          <div class="review-contact-row">
+            <span>{{c.name}}</span>
+            <span class="review-spec">{{c.role}}</span>
+            <span class="review-cost">C{{c.connection}} L{{c.loyalty}}</span>
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+
+        <div class="review-section review-bp">
+          <h4>BP Summary</h4>
+          <div class="ledger-table">
+            <span>Metatype</span>          <span>{{bp.metatypeBP}}</span>
+            <span>Awakened Type</span>     <span>{{bp.awakenedBP}}</span>
+            <span>Attributes</span>        <span>{{bp.attrBP}}</span>
+            <span>Skills</span>            <span>{{bp.skillBP}}</span>
+            <span>+ Qualities</span>       <span>{{bp.posQualBP}}</span>
+            <span>− Qualities</span>       <span>−{{bp.negQualRefund}}</span>
+            <span>Contacts</span>          <span>{{bp.contactBP}}</span>
+            <span>Nuyen ({{nuyen.nuyenValue}}¥)</span><span>{{bp.nuyenBP}}</span>
+            <span class="ledger-total">TOTAL SPENT</span>
+            <span class="ledger-total {{#if bp.overBudget}}over-budget{{/if}}">{{bp.totalSpent}} / 400</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {{/if}}
+
+  </div>{{!-- /wizard-content --}}
+
+  {{!-- ── FOOTER NAV ───────────────────────────────────────────────────────── --}}
+  <div class="wizard-footer">
+    <div class="footer-left">
+      {{#if (gt step 0)}}
+      <button type="button" class="btn-prev sr4-wizard-btn">← Back</button>
+      {{/if}}
+    </div>
+    <div class="footer-right">
+      {{#if (lt step 5)}}
+      <button type="button" class="btn-next sr4-wizard-btn sr4-wizard-btn-primary">Next →</button>
+      {{else}}
+      <button type="button" class="btn-cancel sr4-wizard-btn">Cancel</button>
+      <button type="button" class="btn-create-actor sr4-wizard-btn sr4-wizard-btn-primary"
+        {{#unless validation.canCreate}}disabled{{/unless}}>
+        ⚡ Create Runner
+      </button>
+      {{/if}}
+    </div>
+  </div>
+
+</form>

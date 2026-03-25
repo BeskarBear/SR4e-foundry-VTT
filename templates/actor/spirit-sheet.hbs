@@ -1,0 +1,168 @@
+{{!-- SR4 Spirit Sheet --}}
+<form class="sr4-sheet sr4-spirit-sheet" autocomplete="off">
+
+  <header class="sheet-header">
+    <div class="portrait-wrap">
+      <img class="actor-portrait" src="{{actor.img}}" data-action="editImage" data-edit="img" title="{{actor.name}}" />
+    </div>
+    <div class="header-fields">
+      <input class="charname" type="text" name="name" value="{{actor.name}}" placeholder="Spirit Name" />
+      <div class="header-row">
+        <label>Type</label>
+        <select name="system.spiritType">
+          {{#each spiritTypeChoices as |label key|}}
+          <option value="{{key}}" {{#if (eq ../system.spiritType key)}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+        <label>Plane</label>
+        <select name="system.plane">
+          {{#each planeChoices as |label key|}}
+          <option value="{{key}}" {{#if (eq ../system.plane key)}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="header-row">
+        <label>Force</label>
+        <input type="number" name="system.force" value="{{system.force}}" min="1" max="12" class="force-input" />
+        <label>Tradition</label>
+        <input type="text" name="system.tradition" value="{{system.tradition}}" placeholder="Tradition" />
+      </div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="stats"  data-action="tab" data-group="primary">Stats</a>
+    <a class="item"        data-tab="notes"  data-action="tab" data-group="primary">Notes</a>
+  </nav>
+
+  <section class="sheet-body">
+
+    {{!-- STATS TAB --}}
+    <div class="tab active" data-tab="stats" data-group="primary">
+
+      {{!-- Attributes --}}
+      <div class="spirit-attrs">
+        <h3>Attributes <span class="hint">(Force = {{system.force}})</span></h3>
+        <div class="attr-grid">
+          <div class="attr-cell">
+            <label>BOD</label>
+            <span class="attr-value">{{attrs.body}}</span>
+            <input type="number" name="system.attrOffsets.body" value="{{system.attrOffsets.body}}" class="attr-offset" title="Offset from Force" />
+          </div>
+          <div class="attr-cell">
+            <label>AGI</label>
+            <span class="attr-value">{{attrs.agility}}</span>
+            <input type="number" name="system.attrOffsets.agility" value="{{system.attrOffsets.agility}}" class="attr-offset" />
+          </div>
+          <div class="attr-cell">
+            <label>REA</label>
+            <span class="attr-value">{{attrs.reaction}}</span>
+            <input type="number" name="system.attrOffsets.reaction" value="{{system.attrOffsets.reaction}}" class="attr-offset" />
+          </div>
+          <div class="attr-cell">
+            <label>STR</label>
+            <span class="attr-value">{{attrs.strength}}</span>
+            <input type="number" name="system.attrOffsets.strength" value="{{system.attrOffsets.strength}}" class="attr-offset" />
+          </div>
+          <div class="attr-cell">
+            <label>CHA</label>
+            <span class="attr-value">{{attrs.charisma}}</span>
+            <input type="number" name="system.attrOffsets.charisma" value="{{system.attrOffsets.charisma}}" class="attr-offset" />
+          </div>
+          <div class="attr-cell">
+            <label>INT</label>
+            <span class="attr-value">{{attrs.intuition}}</span>
+            <input type="number" name="system.attrOffsets.intuition" value="{{system.attrOffsets.intuition}}" class="attr-offset" />
+          </div>
+          <div class="attr-cell">
+            <label>LOG</label>
+            <span class="attr-value">{{attrs.logic}}</span>
+            <input type="number" name="system.attrOffsets.logic" value="{{system.attrOffsets.logic}}" class="attr-offset" />
+          </div>
+          <div class="attr-cell">
+            <label>WIL</label>
+            <span class="attr-value">{{attrs.willpower}}</span>
+            <input type="number" name="system.attrOffsets.willpower" value="{{system.attrOffsets.willpower}}" class="attr-offset" />
+          </div>
+        </div>
+        <p class="attr-hint">Offset = attribute − Force. Example: Air spirit BOD = Force−2 → offset −2</p>
+      </div>
+
+      {{!-- Condition Monitor --}}
+      <div class="condition-monitors">
+        <div class="cm-track">
+          <label>Physical
+            <span class="cm-fraction">{{system.condition.physical.value}}/{{physCMMax}}</span>
+          </label>
+          <div class="cm-boxes">
+            {{cmBoxes monitor="physical" value=system.condition.physical.value max=physCMMax}}
+          </div>
+        </div>
+        <div class="cm-track">
+          <label>Astral
+            <span class="cm-fraction">{{system.condition.astral.value}}/{{physCMMax}}</span>
+          </label>
+          <div class="cm-boxes">
+            {{cmBoxes monitor="astral" value=system.condition.astral.value max=physCMMax}}
+          </div>
+        </div>
+      </div>
+
+      {{!-- Binding --}}
+      <div class="spirit-binding">
+        <h3>Binding</h3>
+        <div class="binding-row">
+          <label>Bound</label>
+          <input type="checkbox" name="system.bound" {{#if system.bound}}checked{{/if}} />
+          <label>Services</label>
+          <input type="number" name="system.services" value="{{system.services}}" min="0" class="services-input" />
+          <label>Summoner</label>
+          <input type="text" name="system.summoner" value="{{system.summoner}}" placeholder="Summoner name" />
+        </div>
+      </div>
+
+      {{!-- Quick Rolls --}}
+      <div class="spirit-rolls">
+        <h3>Quick Rolls</h3>
+        <div class="pool-grid">
+          <div class="pool-row">
+            <span>Initiative</span>
+            <span class="pool-value">{{initiativeBase}} + 2d6</span>
+            <a class="pool-roll" data-pool="{{initiativeBase}}" data-label="Spirit Initiative">⚄</a>
+          </div>
+          <div class="pool-row">
+            <span>Combat</span>
+            <span class="pool-value">{{combatPool}}</span>
+            <a class="pool-roll" data-pool="{{combatPool}}" data-label="Spirit Combat">⚄</a>
+          </div>
+          <div class="pool-row">
+            <span>Astral Combat</span>
+            <span class="pool-value">{{system.force}}</span>
+            <a class="pool-roll" data-pool="{{system.force}}" data-label="Astral Combat (Force)">⚄</a>
+          </div>
+        </div>
+      </div>
+
+      {{!-- Powers --}}
+      <div class="spirit-powers">
+        <h3>Powers <a class="power-add" title="Add Power">+</a></h3>
+        {{#each system.powers as |power idx|}}
+        <div class="power-row">
+          <input type="text" name="system.powers.{{idx}}" value="{{power}}" placeholder="Power name" />
+          <a class="power-delete" data-idx="{{idx}}" title="Remove">✕</a>
+        </div>
+        {{/each}}
+      </div>
+
+    </div>{{!-- /stats --}}
+
+    {{!-- NOTES TAB --}}
+    <div class="tab" data-tab="notes" data-group="primary">
+      <div class="notes-body">
+        {{{enrichedNotes}}}
+        <textarea name="system.notes" class="notes-editor">{{system.notes}}</textarea>
+      </div>
+    </div>
+
+  </section>
+</form>

@@ -1,0 +1,110 @@
+{{!-- Magic panel — tradition, spells, adept powers --}}
+
+<div class="magic-panel">
+
+  {{!-- ── AWAKENED TYPE ────────────────────────────────────────────────── --}}
+  <div class="awakened-info">
+    <div class="magic-row">
+      <label>Type</label>
+      <select name="system.awakened.type">
+        <option value="magician"    {{#if (eq system.awakened.type "magician"   )}}selected{{/if}}>Full Magician</option>
+        <option value="adept"       {{#if (eq system.awakened.type "adept"      )}}selected{{/if}}>Adept</option>
+        <option value="mysticAdept" {{#if (eq system.awakened.type "mysticAdept")}}selected{{/if}}>Mystic Adept</option>
+        <option value="aspected"    {{#if (eq system.awakened.type "aspected"   )}}selected{{/if}}>Aspected</option>
+      </select>
+    </div>
+    <div class="magic-row">
+      <label>Tradition</label>
+      <input type="text" name="system.awakened.tradition" value="{{system.awakened.tradition}}" placeholder="Hermetic / Shamanic / etc." />
+    </div>
+    <div class="magic-row">
+      <label>Mentor</label>
+      <input type="text" name="system.awakened.mentor" value="{{system.awakened.mentor}}" placeholder="Mentor spirit / totem" />
+    </div>
+  </div>
+
+  {{!-- ── ADEPT POWER POINTS ─────────────────────────────────────────── --}}
+  {{#if (neq system.awakened.type "magician")}}
+  <div class="pp-tracker">
+    <label>Power Points</label>
+    <input type="number" name="system.awakened.adeptPoints.spent" value="{{system.awakened.adeptPoints.spent}}" min="0" />
+    <span>/</span>
+    <input type="number" name="system.awakened.adeptPoints.total" value="{{system.awakened.adeptPoints.total}}" min="0" />
+    <span class="pp-remaining">({{system.adeptPointsRemaining}} remaining)</span>
+  </div>
+  {{/if}}
+
+  {{!-- ── SPELLS ───────────────────────────────────────────────────────── --}}
+  {{#unless (eq system.awakened.type "adept")}}
+  <div class="spells-section">
+    <h3>Spells
+      <a class="item-create" data-type="spell" title="Add Spell">+</a>
+    </h3>
+    <table class="gear-table spells-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Type</th>
+          <th>Range</th>
+          <th>Damage</th>
+          <th>Drain</th>
+          <th>Sust.</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each spells as |s|}}
+        <tr class="item {{#if s.system.sustained}}sustained{{/if}}" data-item-id="{{s.id}}">
+          <td><span class="item-name">{{s.name}}</span></td>
+          <td>{{s.system.category}}</td>
+          <td>{{s.system.spellType}}</td>
+          <td>{{s.system.range}}</td>
+          <td>{{s.system.damageType}}</td>
+          <td>{{s.system.drain}}</td>
+          <td>
+            <input type="checkbox" data-item-id="{{s.id}}" class="spell-sustained-toggle"
+              {{#if s.system.sustained}}checked{{/if}} />
+          </td>
+          <td class="item-controls">
+            <a class="item-delete" title="Delete">✕</a>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{/unless}}
+
+  {{!-- ── ADEPT POWERS ─────────────────────────────────────────────────── --}}
+  {{#unless (eq system.awakened.type "magician")}}
+  <div class="adept-powers-section">
+    <h3>Adept Powers
+      <a class="item-create" data-type="adeptpower" title="Add Power">+</a>
+    </h3>
+    <table class="gear-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>PP Cost</th>
+          <th>Action</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each adeptPowers as |p|}}
+        <tr class="item" data-item-id="{{p.id}}">
+          <td><span class="item-name">{{p.name}}</span></td>
+          <td>{{p.system.ppCost}}</td>
+          <td>{{p.system.action}}</td>
+          <td class="item-controls">
+            <a class="item-delete" title="Delete">✕</a>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{/unless}}
+
+</div>

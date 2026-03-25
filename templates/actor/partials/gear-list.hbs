@@ -1,0 +1,220 @@
+{{!-- Gear list partial: weapons, armor, cyberware, ammo, general gear --}}
+
+{{!-- ── WEAPONS ──────────────────────────────────────────────────────────── --}}
+<div class="gear-section">
+  <h3 class="section-header">
+    Weapons
+    <a class="item-create" data-type="weapon" title="Add Weapon">+</a>
+  </h3>
+  <table class="gear-table weapons-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th title="Damage Value">DV</th>
+        <th title="Armor Penetration">AP</th>
+        <th title="Fire Mode">Mode</th>
+        <th title="Recoil Compensation">RC</th>
+        <th title="Ammo (current/max) [type]">Ammo</th>
+        <th title="Recoil Penalty">Recoil</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each weapons as |w|}}
+      <tr class="item {{#unless w.system.equipped}}unequipped{{/unless}}" data-item-id="{{w.id}}">
+        <td>
+          <a class="weapon-roll" title="Roll Attack">⚄</a>
+          <span class="item-name">{{w.name}}</span>
+        </td>
+        <td class="dv-cell">
+          {{w.system.dv}}
+          {{#if w.system.ammo.dvMod}}
+            {{#if (gt w.system.ammo.dvMod 0)}}
+              <span class="ammo-dv-badge pos">+{{w.system.ammo.dvMod}}</span>
+            {{else}}
+              <span class="ammo-dv-badge neg">{{w.system.ammo.dvMod}}</span>
+            {{/if}}
+          {{/if}}
+        </td>
+        <td>{{w.system.ap}}</td>
+        <td class="mode-cell">{{w.system.mode}}</td>
+        <td>{{w.system.totalRC}}</td>
+        <td class="ammo-cell">
+          {{#if w.system.isRanged}}
+          <span class="ammo-count {{#if (eq w.system.ammo.current 0)}}ammo-empty{{else if (lt w.system.ammo.current 4)}}ammo-low{{/if}}">
+            {{w.system.ammo.current}}/{{w.system.ammo.max}}
+          </span>
+          {{#if w.system.ammo.type}}
+          <span class="ammo-type-badge-small" title="{{w.system.ammo.type}}">{{w.system.ammo.type}}</span>
+          {{/if}}
+          <a class="weapon-reload" title="Reload weapon from ammo inventory" data-item-id="{{w.id}}">⟳</a>
+          {{/if}}
+        </td>
+        <td class="recoil-cell">
+          {{#if w.system.recoilPenalty}}
+          <span class="recoil-value" title="Cumulative recoil penalty (RC {{w.system.totalRC}})">
+            −{{w.system.recoilPenalty}}
+            {{#if (gt w.system.totalRC 0)}}
+            <span class="recoil-rc">(RC{{w.system.totalRC}})</span>
+            {{/if}}
+          </span>
+          <a class="recoil-reset" title="Clear recoil (new turn / recoil recovery)" data-item-id="{{w.id}}">✕</a>
+          {{/if}}
+        </td>
+        <td class="item-controls">
+          <a class="item-equip" title="{{#if w.system.equipped}}Unequip{{else}}Equip{{/if}}">
+            {{#if w.system.equipped}}◉{{else}}○{{/if}}
+          </a>
+          <a class="item-delete" title="Delete">✕</a>
+        </td>
+      </tr>
+      {{else}}
+      <tr><td colspan="8" class="empty-row">No weapons. Add from compendium or create new.</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
+{{!-- ── ARMOR ────────────────────────────────────────────────────────────── --}}
+<div class="gear-section">
+  <h3 class="section-header">
+    Armor
+    <a class="item-create" data-type="armor" title="Add Armor">+</a>
+  </h3>
+  <table class="gear-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th title="Ballistic">B</th>
+        <th title="Impact">I</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each armor as |a|}}
+      <tr class="item {{#unless a.system.equipped}}unequipped{{/unless}}" data-item-id="{{a.id}}">
+        <td><span class="item-name">{{a.name}}</span></td>
+        <td>{{a.system.armorB}}</td>
+        <td>{{a.system.armorI}}</td>
+        <td class="item-controls">
+          <a class="item-equip" title="Toggle equipped">
+            {{#if a.system.equipped}}◉{{else}}○{{/if}}
+          </a>
+          <a class="item-delete" title="Delete">✕</a>
+        </td>
+      </tr>
+      {{else}}
+      <tr><td colspan="4" class="empty-row">No armor.</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
+{{!-- ── AMMUNITION INVENTORY ────────────────────────────────────────────── --}}
+<div class="gear-section">
+  <h3 class="section-header">
+    Ammunition
+    <a class="item-create" data-type="ammo" title="Add Ammo">+</a>
+  </h3>
+  <table class="gear-table ammo-table">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th title="Quantity">Qty</th>
+        <th title="DV Modifier">DV</th>
+        <th title="AP Modifier">AP</th>
+        <th title="Damage type override or special flag">Notes</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each ammoItems as |a|}}
+      <tr class="item" data-item-id="{{a.id}}">
+        <td><span class="item-name">{{a.name}}</span></td>
+        <td class="{{#if (eq a.system.quantity 0)}}ammo-empty{{else if (lt a.system.quantity 11)}}ammo-low{{/if}}">
+          {{a.system.quantity}}
+        </td>
+        <td>{{#if a.system.dvModifier}}{{#if (gt a.system.dvModifier 0)}}+{{/if}}{{a.system.dvModifier}}{{else}}—{{/if}}</td>
+        <td>{{#if a.system.apModifier}}{{#if (gt a.system.apModifier 0)}}+{{/if}}{{a.system.apModifier}}{{else}}—{{/if}}</td>
+        <td class="ammo-flags-cell">
+          {{#if a.system.damageTypeOverride}}<span class="ammo-flag">→{{a.system.damageTypeOverride}}</span>{{/if}}
+          {{#if a.system.isElectric}}<span class="ammo-flag elec">⚡</span>{{/if}}
+          {{#if a.system.noAutofire}}<span class="ammo-flag restrict">No BF/FA</span>{{/if}}
+          {{#if a.system.tracerBonus}}<span class="ammo-flag tracer">Tracer</span>{{/if}}
+        </td>
+        <td class="item-controls">
+          <a class="item-delete" title="Delete">✕</a>
+        </td>
+      </tr>
+      {{else}}
+      <tr><td colspan="6" class="empty-row">No ammo in inventory. Reload from compendium.</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
+{{!-- ── CYBERWARE ────────────────────────────────────────────────────────── --}}
+<div class="gear-section">
+  <h3 class="section-header">
+    Cyberware / Bioware
+    <a class="item-create" data-type="cyberware" title="Add Ware">+</a>
+  </h3>
+  <table class="gear-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th title="Type">Type</th>
+        <th title="Grade">Grade</th>
+        <th title="Essence Cost">ESS</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each cyberware as |c|}}
+      <tr class="item {{#unless c.system.installed}}unequipped{{/unless}}" data-item-id="{{c.id}}">
+        <td><span class="item-name">{{c.name}}</span></td>
+        <td>{{c.system.wareType}}</td>
+        <td>{{c.system.grade}}</td>
+        <td>{{c.system.actualEssenceCost}}</td>
+        <td class="item-controls">
+          <a class="item-delete" title="Delete">✕</a>
+        </td>
+      </tr>
+      {{else}}
+      <tr><td colspan="5" class="empty-row">No cyberware installed.</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
+{{!-- ── GENERAL GEAR ─────────────────────────────────────────────────────── --}}
+<div class="gear-section">
+  <h3 class="section-header">
+    Gear
+    <a class="item-create" data-type="gear" title="Add Gear">+</a>
+  </h3>
+  <table class="gear-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Qty</th>
+        <th>Rating</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each gear as |g|}}
+      <tr class="item" data-item-id="{{g.id}}">
+        <td><span class="item-name">{{g.name}}</span></td>
+        <td>{{g.system.quantity}}</td>
+        <td>{{#if g.system.rating}}{{g.system.rating}}{{/if}}</td>
+        <td class="item-controls">
+          <a class="item-delete" title="Delete">✕</a>
+        </td>
+      </tr>
+      {{else}}
+      <tr><td colspan="4" class="empty-row">No gear.</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

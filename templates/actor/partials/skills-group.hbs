@@ -1,0 +1,42 @@
+{{!-- Skills group partial. Receives `skills` array of prepared skill objects. --}}
+<div class="skills-list">
+  {{#each skills as |s|}}
+  <div class="skill-row {{#if s.untrained}}untrained{{/if}}" data-skill="{{s.key}}">
+
+    {{!-- Roll button --}}
+    <a class="skill-roll"
+       data-skill="{{s.key}}"
+       data-attr="{{s.attrKey}}"
+       data-label="{{s.label}}"
+       data-spec="false"
+       title="Roll {{s.label}} ({{s.attrKey}} {{s.attrVal}}) = {{s.pool}} dice">⚄</a>
+
+    {{!-- Skill name --}}
+    <span class="skill-name">{{s.label}}</span>
+
+    {{!-- Rating input --}}
+    <input type="number" name="system.skills.{{s.key}}.value"
+      value="{{s.value}}" min="0" max="9" class="skill-val" />
+
+    {{!-- Pool display --}}
+    <span class="skill-pool" title="Dice pool">{{s.pool}}</span>
+
+    {{!-- Specialization --}}
+    <input type="text" name="system.skills.{{s.key}}.specialization"
+      value="{{s.specialization}}" placeholder="Spec (+2)" class="spec-input" />
+
+    {{!-- Spec roll button (only if has spec) --}}
+    {{#if s.specialization}}
+    <a class="skill-roll"
+       data-skill="{{s.key}}"
+       data-attr="{{s.attrKey}}"
+       data-label="{{s.label}}"
+       data-spec="true"
+       title="Roll with Specialization = {{s.specPool}} dice">★</a>
+    {{else}}
+    <span class="spec-roll-placeholder"></span>
+    {{/if}}
+
+  </div>
+  {{/each}}
+</div>

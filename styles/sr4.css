@@ -1,0 +1,2207 @@
+/* ============================================================================
+   SR4 Foundry VTT System Stylesheet
+   Shadowrun 4th Edition 20th Anniversary
+   Aesthetic: neon-on-dark, gritty cyberpunk, data-stream accents
+   ============================================================================ */
+
+/* ── VARIABLES ────────────────────────────────────────────────────────────── */
+:root {
+  --sr4-bg-dark:      #0f0f12;
+  --sr4-bg:           #1a1a1e;
+  --sr4-bg-mid:       #242428;
+  --sr4-bg-light:     #2e2e34;
+  --sr4-border:       #3a3a42;
+  --sr4-neon:         #00d4aa;       /* Teal neon — SR4 Matrix green/teal */
+  --sr4-neon-dim:     #007a62;
+  --sr4-red:          #e83030;       /* Damage / danger */
+  --sr4-orange:       #e87030;       /* Warning / stun */
+  --sr4-yellow:       #e8c030;       /* Edge */
+  --sr4-text:         #d0d0d8;
+  --sr4-text-muted:   #7a7a88;
+  --sr4-text-label:   #9090a0;
+  --sr4-font-mono:    "Share Tech Mono", "Consolas", monospace;
+  --sr4-font-body:    "Rajdhani", "Segoe UI", sans-serif;
+  --sr4-radius:       3px;
+}
+
+/* ── SHEET CHROME ─────────────────────────────────────────────────────────── */
+.sr4-sheet {
+  font-family:    var(--sr4-font-body);
+  font-size:      13px;
+  color:          var(--sr4-text);
+  background:     var(--sr4-bg);
+  border:         1px solid var(--sr4-border);
+  overflow-y:     auto;
+}
+
+.sr4-sheet input,
+.sr4-sheet select,
+.sr4-sheet textarea {
+  background:   var(--sr4-bg-mid);
+  border:       1px solid var(--sr4-border);
+  color:        var(--sr4-text);
+  border-radius: var(--sr4-radius);
+  padding:      2px 4px;
+}
+
+.sr4-sheet select option {
+  background: var(--sr4-bg-mid);
+  color:      var(--sr4-text);
+}
+
+.sr4-sheet input:focus,
+.sr4-sheet select:focus {
+  border-color:  var(--sr4-neon);
+  outline:       none;
+  box-shadow:    0 0 4px var(--sr4-neon-dim);
+}
+
+/* ── SHEET HEADER ─────────────────────────────────────────────────────────── */
+.sr4-sheet .sheet-header {
+  display:         flex;
+  gap:             12px;
+  padding:         10px 12px;
+  background:      var(--sr4-bg-mid);
+  border-bottom:   2px solid var(--sr4-neon);
+}
+
+.sr4-sheet .portrait-wrap img {
+  width:        80px;
+  height:       80px;
+  object-fit:   cover;
+  border:       2px solid var(--sr4-neon);
+  border-radius: 2px;
+}
+
+.sr4-sheet .header-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sr4-sheet .header-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.sr4-sheet .charname {
+  font-size:   18px;
+  font-weight: 700;
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--sr4-border);
+  color: var(--sr4-neon);
+}
+
+.sr4-sheet .handle {
+  font-family: var(--sr4-font-mono);
+  font-size:   12px;
+  color:       var(--sr4-text-muted);
+  flex: 1;
+}
+
+/* ── TABS ─────────────────────────────────────────────────────────────────── */
+.sr4-sheet .sheet-tabs {
+  display:       flex;
+  gap:           2px;
+  padding:       4px 8px 0;
+  background:    var(--sr4-bg-mid);
+  border-bottom: 1px solid var(--sr4-border);
+}
+
+.sr4-sheet .sheet-tabs .item {
+  padding:       4px 10px;
+  font-size:     11px;
+  font-weight:   600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color:         var(--sr4-text-muted);
+  border:        1px solid transparent;
+  border-bottom: none;
+  cursor:        pointer;
+  transition:    color 0.15s, border-color 0.15s;
+}
+
+.sr4-sheet .sheet-tabs .item:hover,
+.sr4-sheet .sheet-tabs .item.active {
+  color:         var(--sr4-neon);
+  border-color:  var(--sr4-neon);
+  background:    var(--sr4-bg);
+}
+
+/* ── SHEET BODY ───────────────────────────────────────────────────────────── */
+.sr4-sheet .sheet-body {
+  padding:   10px 12px;
+  overflow-y: auto;
+}
+
+.sr4-sheet .tab {
+  display: none;
+}
+
+.sr4-sheet .tab.active {
+  display: block;
+}
+
+/* ── SECTION HEADERS ─────────────────────────────────────────────────────── */
+.sr4-sheet .section-header,
+.sr4-sheet h3 {
+  font-size:      11px;
+  font-weight:    700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color:          var(--sr4-neon);
+  border-bottom:  1px solid var(--sr4-neon-dim);
+  padding-bottom: 2px;
+  margin:         10px 0 6px;
+}
+
+.sr4-sheet h4 {
+  font-size:  10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color:      var(--sr4-text-label);
+  margin:     6px 0 3px;
+}
+
+/* ── ATTRIBUTES GRID ─────────────────────────────────────────────────────── */
+.sr4-sheet .attributes-grid {
+  display:  grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap:      10px;
+}
+
+.sr4-sheet .attribute {
+  display:     flex;
+  align-items: center;
+  gap:         4px;
+  margin:      2px 0;
+}
+
+.sr4-sheet .attr-label {
+  width:      72px;
+  font-size:  12px;
+  color:      var(--sr4-text-label);
+}
+
+.sr4-sheet .attr-input {
+  width:      40px;
+  text-align: center;
+  font-family: var(--sr4-font-mono);
+  font-size:  14px;
+  font-weight: 700;
+  color:      var(--sr4-text);
+}
+
+.sr4-sheet .attr-aug {
+  font-size:  10px;
+  color:      var(--sr4-neon);
+  font-family: var(--sr4-font-mono);
+}
+
+.sr4-sheet .attr-roll {
+  font-size:  14px;
+  cursor:     pointer;
+  color:      var(--sr4-text-muted);
+  transition: color 0.15s;
+}
+
+.sr4-sheet .attr-roll:hover {
+  color: var(--sr4-neon);
+}
+
+/* ── CONDITION MONITORS ───────────────────────────────────────────────────── */
+.sr4-sheet .condition-monitors {
+  margin: 8px 0;
+}
+
+.sr4-sheet .cm-row {
+  display:    flex;
+  gap:        20px;
+  flex-wrap:  wrap;
+}
+
+.sr4-sheet .cm-track label {
+  display:   block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color:     var(--sr4-text-label);
+  margin-bottom: 3px;
+}
+
+.sr4-sheet .cm-fraction {
+  font-family: var(--sr4-font-mono);
+  color: var(--sr4-text-muted);
+  margin-left: 4px;
+}
+
+.sr4-sheet .cm-boxes {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       2px;
+  align-items: center;
+}
+
+.sr4-sheet .cm-box {
+  width:         14px;
+  height:        14px;
+  border:        1px solid var(--sr4-border);
+  border-radius: 1px;
+  cursor:        pointer;
+  transition:    background 0.1s, border-color 0.1s;
+}
+
+.sr4-sheet .cm-box:hover {
+  border-color: var(--sr4-neon);
+}
+
+.cm-track:first-child .cm-box.filled {
+  background: var(--sr4-red);
+  border-color: var(--sr4-red);
+}
+
+.cm-track:last-child .cm-box.filled {
+  background: var(--sr4-orange);
+  border-color: var(--sr4-orange);
+}
+
+.sr4-sheet .cm-separator {
+  width: 4px;
+}
+
+/* ── WOUND MODIFIER ───────────────────────────────────────────────────────── */
+.sr4-sheet .wound-modifier {
+  display:     inline-flex;
+  align-items: center;
+  gap:         6px;
+  padding:     3px 8px;
+  background:  var(--sr4-red);
+  border-radius: var(--sr4-radius);
+  font-size:   12px;
+  font-weight: 700;
+  margin:      4px 0;
+}
+
+/* ── ESSENCE BREAKDOWN ────────────────────────────────────────────────────── */
+.sr4-sheet .essence-breakdown {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  padding:     4px 10px;
+  background:  rgba(0,0,0,0.25);
+  border:      1px solid var(--sr4-border);
+  border-radius: var(--sr4-radius);
+  font-size:   13px;
+  margin:      4px 0;
+}
+.sr4-sheet .essence-breakdown label {
+  color:       var(--sr4-neon);
+  font-weight: 700;
+  font-size:   11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  min-width:   54px;
+  margin:      0;
+}
+.sr4-sheet .essence-current {
+  font-size:   16px;
+  font-weight: 700;
+  color:       var(--sr4-text);
+}
+.sr4-sheet .essence-base {
+  color:       var(--sr4-muted);
+  font-size:   13px;
+}
+.sr4-sheet .essence-sep {
+  color:       var(--sr4-muted);
+}
+.sr4-sheet .essence-lost {
+  margin-left: 8px;
+  font-size:   11px;
+  color:       var(--sr4-red);
+  font-style:  italic;
+}
+
+/* ── EDGE PIPS ────────────────────────────────────────────────────────────── */
+.sr4-sheet .edge-pip {
+  display:       inline-block;
+  width:         12px;
+  height:        12px;
+  border-radius: 50%;
+  border:        1px solid var(--sr4-yellow);
+  background:    var(--sr4-yellow);
+  cursor:        pointer;
+  transition:    background 0.15s;
+  margin:        0 1px;
+}
+
+.sr4-sheet .edge-pip.spent {
+  background: transparent;
+}
+
+/* ── DERIVED STATS GRID ───────────────────────────────────────────────────── */
+.sr4-sheet .derived-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.sr4-sheet .derived-stat {
+  background: var(--sr4-bg-mid);
+  border:     1px solid var(--sr4-border);
+  border-radius: var(--sr4-radius);
+  padding:    4px 6px;
+  text-align: center;
+}
+
+.sr4-sheet .derived-stat label {
+  display:   block;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color:     var(--sr4-text-label);
+}
+
+.sr4-sheet .derived-stat span,
+.sr4-sheet .derived-stat input {
+  font-family: var(--sr4-font-mono);
+  font-size:  13px;
+  font-weight: 700;
+  color:      var(--sr4-text);
+  text-align: center;
+  background: transparent;
+  border:     none;
+  width:      100%;
+}
+
+/* ── SKILLS ───────────────────────────────────────────────────────────────── */
+.sr4-sheet .skill-group {
+  margin-bottom: 8px;
+}
+
+.sr4-sheet .skill-group-header {
+  display:     flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sr4-sheet .skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.sr4-sheet .skill-row {
+  display:     grid;
+  grid-template-columns: 18px 1fr 36px 30px 80px 18px;
+  gap:         3px;
+  align-items: center;
+  padding:     1px 3px;
+  border-radius: var(--sr4-radius);
+  transition:  background 0.1s;
+}
+
+.sr4-sheet .skill-row:hover {
+  background: var(--sr4-bg-light);
+}
+
+.sr4-sheet .skill-row.untrained .skill-name {
+  color: var(--sr4-text-muted);
+  font-style: italic;
+}
+
+.sr4-sheet .skill-name {
+  font-size: 12px;
+}
+
+.sr4-sheet .skill-val {
+  width: 30px;
+  text-align: center;
+  font-family: var(--sr4-font-mono);
+  font-weight: 700;
+}
+
+.sr4-sheet .skill-pool {
+  font-family: var(--sr4-font-mono);
+  font-size:   13px;
+  font-weight: 700;
+  color:       var(--sr4-neon);
+  text-align:  center;
+}
+
+.sr4-sheet .spec-input {
+  font-size: 10px;
+  color:     var(--sr4-text-muted);
+}
+
+.sr4-sheet .skill-roll {
+  font-size:  12px;
+  cursor:     pointer;
+  color:      var(--sr4-text-muted);
+}
+
+.sr4-sheet .skill-roll:hover {
+  color: var(--sr4-neon);
+}
+
+/* ── GEAR TABLES ─────────────────────────────────────────────────────────── */
+.sr4-sheet .gear-table {
+  width:         100%;
+  border-collapse: collapse;
+  font-size:     12px;
+  margin-bottom: 8px;
+}
+
+.sr4-sheet .gear-table th {
+  text-align:   left;
+  font-size:    9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color:        var(--sr4-text-muted);
+  border-bottom: 1px solid var(--sr4-border);
+  padding:      2px 4px;
+}
+
+.sr4-sheet .gear-table td {
+  padding:      3px 4px;
+  border-bottom: 1px solid var(--sr4-bg-light);
+}
+
+.sr4-sheet .gear-table .item:hover td {
+  background: var(--sr4-bg-light);
+}
+
+.sr4-sheet .gear-table .unequipped td {
+  opacity: 0.5;
+}
+
+.sr4-sheet .item-controls {
+  display:     flex;
+  gap:         6px;
+  justify-content: flex-end;
+}
+
+.sr4-sheet .item-controls a,
+.sr4-sheet .item-create {
+  color:     var(--sr4-text-muted);
+  cursor:    pointer;
+  font-size: 11px;
+  transition: color 0.15s;
+}
+
+.sr4-sheet .item-controls a:hover {
+  color: var(--sr4-red);
+}
+
+.sr4-sheet .item-create:hover {
+  color: var(--sr4-neon);
+}
+
+.sr4-sheet .weapon-roll {
+  cursor: pointer;
+  color:  var(--sr4-text-muted);
+  margin-right: 4px;
+}
+
+.sr4-sheet .weapon-roll:hover {
+  color: var(--sr4-neon);
+}
+
+/* ── MATRIX PANEL ─────────────────────────────────────────────────────────── */
+.sr4-sheet .persona-attrs {
+  display:   grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:       8px;
+  margin:    8px 0;
+}
+
+.sr4-sheet .persona-attr {
+  background: var(--sr4-bg-mid);
+  border:     1px solid var(--sr4-neon-dim);
+  border-radius: var(--sr4-radius);
+  padding:    6px;
+  text-align: center;
+}
+
+.sr4-sheet .persona-attr label {
+  display:   block;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color:     var(--sr4-neon-dim);
+  margin-bottom: 2px;
+}
+
+.sr4-sheet .persona-attr span,
+.sr4-sheet .persona-attr input {
+  font-family: var(--sr4-font-mono);
+  font-size:   18px;
+  font-weight: 700;
+  color:       var(--sr4-neon);
+  text-align:  center;
+  background:  transparent;
+  border:      none;
+  width:       100%;
+}
+
+.sr4-sheet .hot-sim-warning {
+  font-size: 10px;
+  color:     var(--sr4-red);
+  margin-left: 6px;
+}
+
+.sr4-sheet .programs-table .inactive td {
+  opacity: 0.5;
+}
+
+/* ── MAGIC PANEL ──────────────────────────────────────────────────────────── */
+.sr4-sheet .magic-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  margin:      4px 0;
+}
+
+.sr4-sheet .magic-row label {
+  width:    70px;
+  font-size: 11px;
+  color:    var(--sr4-text-label);
+}
+
+.sr4-sheet .pp-tracker {
+  display:     flex;
+  align-items: center;
+  gap:         4px;
+  margin:      6px 0;
+  font-family: var(--sr4-font-mono);
+}
+
+.sr4-sheet .pp-remaining {
+  color:     var(--sr4-neon);
+  font-size: 11px;
+}
+
+.sr4-sheet .spell-sustained {
+  background: rgba(0, 212, 170, 0.1);
+}
+
+/* ── NPC SHEET ────────────────────────────────────────────────────────────── */
+.sr4-sheet.sr4-npc-sheet .pool-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sr4-sheet .pool-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+}
+
+.sr4-sheet .pool-row span:first-child {
+  width:    80px;
+  font-size: 12px;
+}
+
+.sr4-sheet .pool-roll {
+  cursor: pointer;
+  color:  var(--sr4-text-muted);
+  font-size: 14px;
+}
+
+.sr4-sheet .pool-roll:hover {
+  color: var(--sr4-neon);
+}
+
+.sr4-sheet .pr-input {
+  width:  40px;
+  font-family: var(--sr4-font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--sr4-neon);
+}
+
+.sr4-sheet .npc-armor,
+.sr4-sheet .npc-weapon,
+.sr4-sheet .npc-initiative {
+  display:     flex;
+  align-items: center;
+  gap:         4px;
+  margin:      6px 0;
+  font-size:   12px;
+}
+
+.sr4-sheet .npc-weapon .weapon-name {
+  flex: 1;
+}
+
+.sr4-sheet .dv-input {
+  width: 50px;
+}
+
+/* ── BIO TAB ──────────────────────────────────────────────────────────────── */
+.sr4-sheet .bio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.sr4-sheet .bio-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  margin:      3px 0;
+}
+
+.sr4-sheet .bio-row label {
+  width:    55px;
+  font-size: 11px;
+  color:    var(--sr4-text-label);
+}
+
+.sr4-sheet .contact {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  padding:     3px 0;
+  border-bottom: 1px solid var(--sr4-border);
+  font-size:   12px;
+}
+
+.sr4-sheet .contact .item-name {
+  flex: 1;
+  cursor: pointer;
+}
+
+.sr4-sheet .contact-role {
+  color: var(--sr4-text-muted);
+  font-size: 11px;
+}
+
+.sr4-sheet .contact-ratings {
+  font-family: var(--sr4-font-mono);
+  font-size:  11px;
+  color:      var(--sr4-neon);
+}
+
+.sr4-sheet .quality {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  padding:     2px 0;
+  font-size:   12px;
+}
+
+.sr4-sheet .quality.positive .quality-type {
+  color: var(--sr4-neon);
+}
+
+.sr4-sheet .quality.negative .quality-type {
+  color: var(--sr4-orange);
+}
+
+.sr4-sheet .quality-bp {
+  font-family: var(--sr4-font-mono);
+  font-size:   10px;
+  color:       var(--sr4-text-muted);
+}
+
+/* ── CHAT: OUTER CARD OVERRIDE ────────────────────────────────────────────── */
+/* Target Foundry's .chat-message shell when it contains an SR4 roll */
+#chat-log .chat-message:has(.sr4-roll-result),
+#chat-log .chat-message:has(.sr4-roll-card) {
+  background:   var(--sr4-bg-dark) !important;
+  border-color: var(--sr4-border) !important;
+  box-shadow:   none !important;
+}
+#chat-log .chat-message:has(.sr4-roll-result) .message-header,
+#chat-log .chat-message:has(.sr4-roll-card) .message-header {
+  background:        var(--sr4-bg-mid) !important;
+  border-bottom-color: var(--sr4-border) !important;
+}
+#chat-log .chat-message:has(.sr4-roll-result) .message-sender,
+#chat-log .chat-message:has(.sr4-roll-result) .message-timestamp,
+#chat-log .chat-message:has(.sr4-roll-card) .message-sender,
+#chat-log .chat-message:has(.sr4-roll-card) .message-timestamp {
+  color: var(--sr4-text-muted) !important;
+}
+
+/* ── CHAT: SR4 ROLL RESULT ────────────────────────────────────────────────── */
+.sr4-roll-result {
+  background:   var(--sr4-bg);
+  border:       1px solid var(--sr4-border);
+  border-radius: 4px;
+  padding:      8px 10px;
+  font-family:  var(--sr4-font-body);
+  font-size:    13px;
+  color:        var(--sr4-text);
+}
+
+.sr4-roll-result.success    { border-color: var(--sr4-neon); }
+.sr4-roll-result.failure    { border-color: var(--sr4-border); }
+.sr4-roll-result.glitch     { border-color: var(--sr4-orange); }
+.sr4-roll-result.crit-glitch { border-color: var(--sr4-red); background: #281212; }
+
+.sr4-roll-header {
+  font-weight: 700;
+  font-size:   14px;
+  margin-bottom: 4px;
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+}
+
+.sr4-edge-badge {
+  font-size:     9px;
+  background:    var(--sr4-yellow);
+  color:         #111;
+  padding:       1px 4px;
+  border-radius: 2px;
+  font-weight:   800;
+  letter-spacing: 0.05em;
+}
+
+.sr4-pool-label {
+  font-size:  11px;
+  color:      var(--sr4-text-muted);
+  margin-bottom: 6px;
+}
+
+.sr4-dice-tray {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       3px;
+  margin:    4px 0;
+}
+
+.sr4-die {
+  display:       inline-flex;
+  align-items:   center;
+  justify-content: center;
+  width:         24px;
+  height:        24px;
+  border-radius: 3px;
+  font-family:   var(--sr4-font-mono);
+  font-size:     13px;
+  font-weight:   700;
+  border:        1px solid var(--sr4-border);
+  background:    var(--sr4-bg-mid);
+  color:         var(--sr4-text-muted);
+}
+
+.sr4-die.die-hit {
+  background:  rgba(0, 212, 170, 0.2);
+  border-color: var(--sr4-neon);
+  color:        var(--sr4-neon);
+}
+
+.sr4-die.die-one {
+  background:  rgba(232, 48, 48, 0.2);
+  border-color: var(--sr4-red);
+  color:        var(--sr4-red);
+}
+
+.sr4-rerolls {
+  margin-top:  3px;
+  opacity:     0.7;
+}
+
+.sr4-result-label {
+  font-size:   14px;
+  font-weight: 700;
+  margin-top:  6px;
+}
+
+.sr4-roll-result.success    .sr4-result-label { color: var(--sr4-neon);   }
+.sr4-roll-result.failure    .sr4-result-label { color: var(--sr4-text-muted); }
+.sr4-roll-result.glitch     .sr4-result-label { color: var(--sr4-orange); }
+.sr4-roll-result.crit-glitch .sr4-result-label { color: var(--sr4-red); }
+
+.sr4-net-hits {
+  font-size:  11px;
+  color:      var(--sr4-text-muted);
+}
+
+/* ── SCROLLBAR ────────────────────────────────────────────────────────────── */
+.sr4-sheet ::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sr4-sheet ::-webkit-scrollbar-track {
+  background: var(--sr4-bg);
+}
+
+.sr4-sheet ::-webkit-scrollbar-thumb {
+  background: var(--sr4-neon-dim);
+  border-radius: 2px;
+}
+
+
+/* ============================================================================
+   CHARACTER CREATION WIZARD
+   ============================================================================ */
+
+/* ── FOUNDRY WINDOW OVERRIDE ──────────────────────────────────────────────── */
+/* Must override Foundry's .window-content (padding: 5px; overflow: auto) so
+   the wizard's own sticky header/footer/scroll-area layout can work.
+   Without this, the step bar and footer scroll out of view. */
+.sr4.sr4-wizard .window-content {
+  padding:        0;
+  overflow:       hidden;
+  display:        flex;
+  flex-direction: column;
+  height:         100%;
+  min-height:     0;
+}
+
+/* ── WIZARD SHELL ─────────────────────────────────────────────────────────── */
+.sr4-wizard-form {
+  display:        flex;
+  flex-direction: column;
+  height:         100%;
+  background:     var(--sr4-bg);
+  color:          var(--sr4-text);
+  font-family:    var(--sr4-font-body);
+  font-size:      13px;
+  overflow:       hidden;
+  min-height:     0;
+}
+
+/* ── STEP INDICATOR BAR ───────────────────────────────────────────────────── */
+.wizard-step-bar {
+  display:         flex;
+  gap:             0;
+  background:      var(--sr4-bg-mid);
+  border-bottom:   1px solid var(--sr4-border);
+  padding:         0;
+  flex-shrink:     0;
+}
+
+.wizard-step-nav {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  padding:        6px 10px;
+  font-size:      11px;
+  color:          var(--sr4-text-muted);
+  cursor:         pointer;
+  border-right:   1px solid var(--sr4-border);
+  flex:           1;
+  text-align:     center;
+  transition:     background 0.15s;
+}
+.wizard-step-nav:hover { background: var(--sr4-bg-light); }
+.wizard-step-nav.past  { color: var(--sr4-neon-dim); }
+.wizard-step-nav.active {
+  color:            var(--sr4-neon);
+  background:       var(--sr4-bg-light);
+  border-bottom:    2px solid var(--sr4-neon);
+}
+
+.step-num {
+  font-family:  var(--sr4-font-mono);
+  font-size:    16px;
+  font-weight:  bold;
+  line-height:  1;
+  margin-bottom: 2px;
+}
+.step-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* ── BP BUDGET BAR ────────────────────────────────────────────────────────── */
+.bp-bar {
+  display:        flex;
+  align-items:    center;
+  gap:            8px;
+  padding:        6px 12px;
+  background:     var(--sr4-bg-mid);
+  border-bottom:  1px solid var(--sr4-border);
+  flex-shrink:    0;
+}
+.bp-bar.over-budget { background: rgba(232, 48, 48, 0.15); }
+.bp-label {
+  font-family:  var(--sr4-font-mono);
+  font-size:    11px;
+  color:        var(--sr4-text-muted);
+  min-width:    22px;
+}
+.bp-track {
+  flex:           1;
+  height:         8px;
+  background:     var(--sr4-bg-light);
+  border-radius:  4px;
+  overflow:       hidden;
+}
+.bp-fill {
+  height:           100%;
+  background:       var(--sr4-neon);
+  transition:       width 0.3s ease;
+  border-radius:    4px;
+}
+.bp-bar.over-budget .bp-fill { background: var(--sr4-red); }
+.bp-numbers { font-size: 12px; white-space: nowrap; }
+.bp-over-tag     { color: var(--sr4-red);    margin-left: 6px; font-weight: bold; }
+.bp-remaining-tag { color: var(--sr4-neon-dim); margin-left: 6px; }
+
+/* ── WIZARD CONTENT AREA ──────────────────────────────────────────────────── */
+.wizard-content {
+  flex:       1;
+  min-height: 0;          /* critical: lets flex child shrink below content size */
+  overflow-y: auto;
+  overflow-x: hidden;     /* prevent horizontal scrollbar from grid/layout bleed */
+  padding:    12px 16px;
+}
+
+.step-title {
+  font-size:     18px;
+  color:         var(--sr4-neon);
+  font-family:   var(--sr4-font-mono);
+  margin:        0 0 12px 0;
+  border-bottom: 1px solid var(--sr4-border);
+  padding-bottom: 6px;
+}
+.step-subtitle {
+  font-size:   11px;
+  color:       var(--sr4-text-muted);
+  font-family: var(--sr4-font-body);
+  font-weight: normal;
+  margin-left: 10px;
+}
+
+/* ── STEP 0: CONCEPT ──────────────────────────────────────────────────────── */
+.concept-grid {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   24px;
+}
+.concept-col { display: flex; flex-direction: column; gap: 10px; }
+
+.field-group { display: flex; flex-direction: column; gap: 3px; }
+.field-group label { font-size: 11px; color: var(--sr4-text-label); text-transform: uppercase; letter-spacing: 0.04em; }
+.field-group input, .field-group select {
+  background:    var(--sr4-bg-mid);
+  border:        1px solid var(--sr4-border);
+  color:         var(--sr4-text);
+  border-radius: var(--sr4-radius);
+  padding:       4px 6px;
+  font-size:     13px;
+}
+.field-group input:focus, .field-group select:focus {
+  border-color: var(--sr4-neon);
+  outline:      none;
+}
+.field-hint { font-size: 10px; color: var(--sr4-text-muted); }
+
+.metatype-info { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.metatype-trait {
+  font-size:     10px;
+  background:    var(--sr4-bg-light);
+  border:        1px solid var(--sr4-border);
+  border-radius: 2px;
+  padding:       1px 5px;
+  color:         var(--sr4-text-muted);
+}
+
+.concept-bp-preview {
+  margin-top:    12px;
+  padding:       8px;
+  background:    var(--sr4-bg-light);
+  border:        1px solid var(--sr4-border);
+  border-radius: var(--sr4-radius);
+}
+.bp-preview-row { display: flex; justify-content: space-between; font-size: 12px; padding: 2px 0; }
+.bp-preview-total { font-weight: bold; color: var(--sr4-neon); border-top: 1px solid var(--sr4-border); margin-top: 4px; padding-top: 4px; }
+
+/* ── STEP 1: ATTRIBUTES ───────────────────────────────────────────────────── */
+.attr-wizard-grid {
+  display:               grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap:                   20px;
+  margin-bottom:         12px;
+}
+.attr-col h4 {
+  font-size:     12px;
+  color:         var(--sr4-text-label);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin:        0 0 8px 0;
+  border-bottom: 1px solid var(--sr4-border);
+  padding-bottom: 4px;
+}
+.attr-wizard-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  padding:     3px 0;
+}
+.attr-wizard-label { flex: 1; font-size: 12px; }
+.attr-range-hint { font-size: 10px; color: var(--sr4-text-muted); min-width: 28px; text-align: right; }
+.attr-stepper {
+  display:     flex;
+  align-items: center;
+  gap:         2px;
+}
+.attr-stepper .attr-btn {
+  width:         22px;
+  height:        22px;
+  background:    var(--sr4-bg-light);
+  border:        1px solid var(--sr4-border);
+  color:         var(--sr4-text);
+  cursor:        pointer;
+  border-radius: 2px;
+  font-size:     14px;
+  line-height:   1;
+  padding:       0;
+}
+.attr-stepper .attr-btn:hover:not([disabled]) { border-color: var(--sr4-neon); color: var(--sr4-neon); }
+.attr-stepper .attr-btn[disabled]  { opacity: 0.35; cursor: default; }
+.attr-wizard-val {
+  min-width:   28px;
+  text-align:  center;
+  font-family: var(--sr4-font-mono);
+  font-size:   15px;
+}
+.attr-wizard-val.attr-raised { color: var(--sr4-neon); }
+.attr-cost { font-size: 10px; color: var(--sr4-text-muted); min-width: 36px; text-align: right; }
+.attr-cost.attr-free { color: var(--sr4-bg-light); }
+.attr-special-row .attr-wizard-label { color: var(--sr4-yellow); }
+
+.attr-legend { font-size: 10px; color: var(--sr4-text-muted); margin-top: 12px; line-height: 1.6; }
+.attr-bp-summary {
+  font-size:   12px;
+  color:       var(--sr4-text-muted);
+  padding:     8px;
+  background:  var(--sr4-bg-light);
+  border-radius: var(--sr4-radius);
+  border:      1px solid var(--sr4-border);
+}
+
+/* ── STEP 2: SKILLS ───────────────────────────────────────────────────────── */
+.skills-wizard-layout {
+  display:               grid;
+  grid-template-columns: 260px 1fr;
+  gap:                   20px;
+  margin-bottom:         12px;
+}
+
+.skill-groups-panel h4,
+.individual-skills-panel h4 {
+  font-size:    12px;
+  color:        var(--sr4-text-label);
+  text-transform: uppercase;
+  margin:       0 0 8px 0;
+}
+
+.skill-group-wizard-row {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  padding:     4px 0;
+  border-bottom: 1px solid var(--sr4-border);
+}
+.group-label-block { flex: 1; }
+.group-name { font-size: 12px; display: block; }
+.group-skills-hint { font-size: 10px; color: var(--sr4-text-muted); }
+.group-bp-cost { font-size: 11px; color: var(--sr4-text-muted); min-width: 40px; text-align: right; }
+.group-bp-cost.active-cost { color: var(--sr4-neon); }
+.group-hint { font-size: 10px; color: var(--sr4-text-muted); margin-top: 6px; }
+
+/* Prevent grid blowout — without min-width:0, the 1fr cell won't shrink */
+.individual-skills-panel { min-width: 0; }
+
+.skill-group-details { margin-bottom: 6px; }
+.skill-group-summary {
+  font-size:    12px;
+  color:        var(--sr4-text-label);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor:       pointer;
+  padding:      4px 0;
+  border-bottom: 1px solid var(--sr4-border);
+  list-style:   none;
+}
+.skill-group-summary::-webkit-details-marker { display: none; }
+.skill-group-summary::before { content: "▶ "; font-size: 9px; }
+details[open] .skill-group-summary::before { content: "▼ "; }
+
+.skill-rows { padding: 4px 0 0 0; }
+.skill-wizard-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  padding:     2px 0;
+  border-bottom: 1px solid rgba(58,58,66,0.5);
+}
+.skill-wizard-row.group-covered { opacity: 0.6; }
+.skill-wizard-name { flex: 1; min-width: 0; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.skill-attr-tag { font-size: 10px; color: var(--sr4-text-muted); min-width: 50px; }
+.skill-input { width: 42px; text-align: center; }
+.skill-spec  { width: 90px; font-size: 11px; }
+.skill-wizard-cost { font-size: 10px; color: var(--sr4-text-muted); min-width: 28px; text-align: right; }
+.skill-wizard-cost.active-cost { color: var(--sr4-neon); }
+.group-cover-badge {
+  font-size:   9px;
+  background:  var(--sr4-neon-dim);
+  color:       var(--sr4-bg);
+  border-radius: 2px;
+  padding:     1px 3px;
+}
+
+.knowledge-section {
+  margin-top:   16px;
+  padding-top:  12px;
+  border-top:   1px solid var(--sr4-border);
+}
+.knowledge-header {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+  flex-wrap:   wrap;
+  margin-bottom: 8px;
+}
+.knowledge-header h4 { margin: 0; font-size: 12px; }
+.knowledge-pool-status { font-size: 11px; color: var(--sr4-text-muted); }
+.knowledge-pool-status.over-pool { color: var(--sr4-red); }
+.knowledge-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  padding:     3px 0;
+  border-bottom: 1px solid rgba(58,58,66,0.4);
+}
+.language-row { background: rgba(0,122,98,0.05); }
+.lang-label { font-size: 14px; }
+.native-check { font-size: 11px; color: var(--sr4-text-muted); display: flex; align-items: center; gap: 4px; }
+.knowledge-field { flex: 1; min-width: 80px; }
+
+.skills-bp-total {
+  margin-top:   8px;
+  font-size:    12px;
+  color:        var(--sr4-text-muted);
+  text-align:   right;
+}
+
+/* ── STEP 3: QUALITIES ────────────────────────────────────────────────────── */
+.qualities-wizard-layout {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   20px;
+}
+.qual-header {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     baseline;
+  font-size:       13px;
+  margin:          0 0 8px 0;
+  padding-bottom:  6px;
+  border-bottom:   1px solid var(--sr4-border);
+}
+.qual-positive .qual-bp-total { color: var(--sr4-red); }
+.qual-negative .qual-bp-total { color: var(--sr4-neon); }
+
+.quickpick-panel { margin-bottom: 10px; }
+.quickpick-label { font-size: 10px; color: var(--sr4-text-muted); text-transform: uppercase; margin-bottom: 4px; }
+.quickpick-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.quickpick-quality {
+  font-size:     11px;
+  padding:       2px 7px;
+  background:    var(--sr4-bg-light);
+  border:        1px solid var(--sr4-border);
+  border-radius: 10px;
+  cursor:        pointer;
+  color:         var(--sr4-text-muted);
+  transition:    all 0.15s;
+}
+.quickpick-quality:hover    { border-color: var(--sr4-neon); color: var(--sr4-text); }
+.quickpick-quality.selected { background: var(--sr4-neon-dim); border-color: var(--sr4-neon); color: var(--sr4-bg); }
+
+.quality-wizard-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  padding:     3px 0;
+  border-bottom: 1px solid rgba(58,58,66,0.4);
+}
+.quality-wizard-row input[type="text"] { flex: 1; }
+.bp-tag { font-size: 10px; color: var(--sr4-text-muted); white-space: nowrap; }
+
+.cap-warning { font-size: 10px; color: var(--sr4-red); }
+.cap-warning-banner {
+  margin-top:    12px;
+  padding:       8px;
+  background:    rgba(232,48,48,0.1);
+  border:        1px solid var(--sr4-red);
+  border-radius: var(--sr4-radius);
+  color:         var(--sr4-red);
+  font-size:     12px;
+}
+
+/* ── STEP 4: CONTACTS & RESOURCES ─────────────────────────────────────────── */
+.contacts-resources-layout {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   20px;
+}
+.contacts-panel,
+.resources-panel { min-width: 0; }
+
+.contact-header-row {
+  display:               grid;
+  grid-template-columns: 1fr 36px 36px 54px 20px;
+  gap:                   6px;
+  font-size:             10px;
+  color:                 var(--sr4-text-muted);
+  text-transform:        uppercase;
+  padding:               4px 0;
+  border-bottom:         1px solid var(--sr4-border);
+  margin-bottom:         4px;
+}
+.contact-wizard-row {
+  display:               grid;
+  grid-template-columns: 1fr 36px 36px 54px 20px;
+  gap:                   6px;
+  align-items:           center;
+  padding:               3px 0;
+  border-bottom:         1px solid rgba(58,58,66,0.4);
+}
+.contact-name-role { display: flex; flex-direction: column; gap: 2px; }
+.contact-name-role input { width: 100%; }
+.rating-input { text-align: center; width: 36px; }
+.contact-bp-cost { font-size: 11px; color: var(--sr4-text-muted); text-align: right; }
+
+.nuyen-section { margin-bottom: 16px; }
+.nuyen-remaining-info { font-size: 12px; margin-bottom: 8px; }
+.nuyen-input-row {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  font-size:   13px;
+}
+.nuyen-input { width: 60px; text-align: right; }
+.nuyen-result-val { font-family: var(--sr4-font-mono); color: var(--sr4-yellow); font-size: 15px; }
+.nuyen-hint { font-size: 10px; color: var(--sr4-text-muted); margin-top: 6px; }
+
+.resources-ledger h4 { font-size: 12px; margin: 0 0 6px 0; }
+.ledger-table {
+  display:               grid;
+  grid-template-columns: 1fr auto;
+  gap:                   2px 12px;
+  font-size:             12px;
+}
+.ledger-total {
+  font-weight: bold;
+  padding-top: 6px;
+  border-top:  1px solid var(--sr4-border);
+  margin-top:  4px;
+}
+.ledger-total.over-budget { color: var(--sr4-red); }
+
+/* ── STEP 5: REVIEW ───────────────────────────────────────────────────────── */
+.review-grid {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   16px;
+}
+.review-section { background: var(--sr4-bg-light); border: 1px solid var(--sr4-border); border-radius: var(--sr4-radius); padding: 10px; min-width: 0; overflow: hidden; }
+.review-section h4 { font-size: 12px; color: var(--sr4-text-label); text-transform: uppercase; margin: 0 0 8px 0; }
+.review-field { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; padding: 2px 0; }
+.review-field label { color: var(--sr4-text-muted); flex-shrink: 0; }
+.review-field span { text-align: right; font-family: var(--sr4-font-mono); }
+.review-attr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; }
+.review-skill { font-size: 11px; padding: 1px 0; display: flex; justify-content: space-between; }
+
+.validation-error   { padding: 8px; background: rgba(232,48,48,0.15); border: 1px solid var(--sr4-red); border-radius: var(--sr4-radius); color: var(--sr4-red); font-size: 12px; margin-bottom: 10px; }
+.validation-warning { padding: 8px; background: rgba(232,192,48,0.1); border: 1px solid var(--sr4-yellow); border-radius: var(--sr4-radius); color: var(--sr4-yellow); font-size: 12px; margin-bottom: 6px; }
+.validation-ok      { padding: 8px; background: rgba(0,212,170,0.1); border: 1px solid var(--sr4-neon); border-radius: var(--sr4-radius); color: var(--sr4-neon); font-size: 12px; margin-bottom: 10px; }
+
+/* Review step rows */
+.review-attr-row {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     baseline;
+  gap:             8px;
+  font-size:       12px;
+  padding:         2px 0;
+  border-bottom:   1px solid rgba(58,58,66,0.3);
+}
+.review-attr-row label { color: var(--sr4-text-muted); flex-shrink: 0; }
+.review-attr-val { font-family: var(--sr4-font-mono); font-size: 13px; }
+.review-cost     { font-size: 10px; color: var(--sr4-text-muted); }
+
+.review-skill-row {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     baseline;
+  gap:             6px;
+  font-size:       11px;
+  padding:         2px 0;
+}
+.review-spec     { font-size: 10px; color: var(--sr4-text-muted); font-style: italic; }
+.review-empty    { font-size: 11px; color: var(--sr4-text-muted); }
+
+.review-quality {
+  display:         flex;
+  justify-content: space-between;
+  font-size:       12px;
+  padding:         2px 0;
+}
+.review-quality.positive span:first-child { color: var(--sr4-neon); }
+.review-quality.negative span:first-child { color: var(--sr4-orange); }
+
+.review-contact-row {
+  display:   flex;
+  gap:       8px;
+  font-size: 12px;
+  padding:   3px 0;
+  border-bottom: 1px solid rgba(58,58,66,0.3);
+}
+.review-contact-row span:first-child { flex: 1; }
+
+/* skill group badge in review */
+.group-badge {
+  font-size:   9px;
+  background:  var(--sr4-neon-dim);
+  color:       var(--sr4-bg);
+  border-radius: 2px;
+  padding:     1px 3px;
+  flex-shrink: 0;
+}
+
+/* ── SHARED WIZARD ELEMENTS ───────────────────────────────────────────────── */
+.wizard-add-btn {
+  display:       inline-block;
+  margin-top:    6px;
+  font-size:     11px;
+  color:         var(--sr4-neon);
+  cursor:        pointer;
+  text-decoration: none;
+}
+.wizard-add-btn:hover { text-decoration: underline; }
+
+.remove-contact,
+.remove-quality,
+.remove-knowledge,
+.remove-language {
+  color:   var(--sr4-red);
+  cursor:  pointer;
+  font-size: 12px;
+  opacity: 0.6;
+}
+.remove-contact:hover,
+.remove-quality:hover,
+.remove-knowledge:hover,
+.remove-language:hover { opacity: 1; }
+
+/* ── WIZARD FOOTER ────────────────────────────────────────────────────────── */
+.wizard-footer {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  padding:         10px 16px;
+  background:      var(--sr4-bg-mid);
+  border-top:      1px solid var(--sr4-border);
+  flex-shrink:     0;
+  min-height:      0;
+}
+.wizard-footer .footer-left,
+.wizard-footer .footer-right { display: flex; align-items: center; gap: 8px; }
+.wizard-footer .btn-prev,
+.wizard-footer .btn-next {
+  padding:       5px 16px;
+  background:    var(--sr4-bg-light);
+  border:        1px solid var(--sr4-border);
+  color:         var(--sr4-text);
+  border-radius: var(--sr4-radius);
+  cursor:        pointer;
+  font-size:     12px;
+  font-family:   var(--sr4-font-body);
+}
+.wizard-footer .btn-next {
+  border-color: var(--sr4-neon);
+  color:        var(--sr4-neon);
+}
+.wizard-footer .btn-next:hover { background: var(--sr4-neon); color: var(--sr4-bg); }
+.wizard-footer .btn-prev:hover { border-color: var(--sr4-text-muted); }
+.wizard-footer .btn-create-actor {
+  padding:      6px 20px;
+  background:   var(--sr4-neon);
+  border:       none;
+  border-radius: var(--sr4-radius);
+  color:        var(--sr4-bg);
+  font-weight:  bold;
+  font-size:    13px;
+  cursor:       pointer;
+  font-family:  var(--sr4-font-mono);
+}
+.wizard-footer .btn-create-actor:hover { background: #00f5c4; }
+.wizard-footer .btn-create-actor[disabled] { opacity: 0.4; cursor: default; }
+.wizard-footer .btn-cancel {
+  padding:      5px 14px;
+  background:   transparent;
+  border:       1px solid var(--sr4-border);
+  color:        var(--sr4-text-muted);
+  border-radius: var(--sr4-radius);
+  cursor:       pointer;
+  font-size:    12px;
+  margin-right: 8px;
+}
+.wizard-footer .btn-cancel:hover { border-color: var(--sr4-red); color: var(--sr4-red); }
+
+
+/* ============================================================================
+   FIRE MODE DIALOG & RELOAD DIALOG
+   ============================================================================ */
+
+/* ── DIALOG CHROME (all SR4 dialogs) ──────────────────────────────────────── */
+.app.dialog.sr4 .window-content {
+  background:  var(--sr4-bg);
+  color:       var(--sr4-text);
+  font-family: var(--sr4-font-body);
+}
+
+.app.dialog.sr4 .window-header {
+  background:     var(--sr4-bg-mid);
+  border-bottom:  1px solid var(--sr4-border);
+  color:          var(--sr4-text);
+}
+
+.app.dialog.sr4 .dialog-buttons {
+  background:     var(--sr4-bg-mid);
+  border-top:     1px solid var(--sr4-border);
+  padding:        6px 8px;
+}
+
+.app.dialog.sr4 .dialog-buttons button {
+  background:    var(--sr4-bg-light);
+  color:         var(--sr4-text);
+  border:        1px solid var(--sr4-border);
+  border-radius: var(--sr4-radius);
+}
+
+.app.dialog.sr4 .dialog-buttons button:hover {
+  border-color: var(--sr4-neon);
+  color:        var(--sr4-neon);
+}
+
+.app.dialog.sr4 select,
+.app.dialog.sr4 input {
+  background:    var(--sr4-bg-mid);
+  color:         var(--sr4-text);
+  border:        1px solid var(--sr4-border);
+  border-radius: var(--sr4-radius);
+}
+
+.app.dialog.sr4 select option {
+  background: var(--sr4-bg-mid);
+  color:      var(--sr4-text);
+}
+
+/* ── FIRE MODE ────────────────────────────────────────────────────────────── */
+.sr4-fire-mode-dialog,
+.sr4-reload-dialog {
+  font-family: var(--sr4-font-body);
+  font-size:   13px;
+  color:       var(--sr4-text);
+}
+
+.fire-mode-ammo-status {
+  display:        flex;
+  align-items:    center;
+  gap:            10px;
+  flex-wrap:      wrap;
+  padding:        6px 8px;
+  background:     var(--sr4-bg-mid);
+  border:         1px solid var(--sr4-border);
+  border-radius:  var(--sr4-radius);
+  margin-bottom:  10px;
+  font-size:      12px;
+}
+.ammo-badge {
+  background:    var(--sr4-bg-light);
+  border:        1px solid var(--sr4-border);
+  border-radius: 10px;
+  padding:       1px 8px;
+  font-family:   var(--sr4-font-mono);
+  font-size:     11px;
+}
+.ammo-badge.ammo-low { border-color: var(--sr4-orange); color: var(--sr4-orange); }
+.recoil-status { font-size: 11px; color: var(--sr4-red); margin-left: auto; }
+
+.fire-mode-options { display: flex; flex-direction: column; gap: 4px; }
+
+.fire-mode-option {
+  display:       flex;
+  align-items:   center;
+  gap:           10px;
+  padding:       6px 8px;
+  border:        1px solid var(--sr4-border);
+  border-radius: var(--sr4-radius);
+  cursor:        pointer;
+  transition:    background 0.12s, border-color 0.12s;
+}
+.fire-mode-option:hover:not(.disabled) { background: var(--sr4-bg-light); border-color: var(--sr4-neon); }
+.fire-mode-option.no-ammo              { opacity: 0.4; cursor: not-allowed; }
+.fire-mode-option input[type="radio"]  { accent-color: var(--sr4-neon); }
+
+.fire-mode-details {
+  display:     flex;
+  align-items: baseline;
+  gap:         10px;
+  flex-wrap:   wrap;
+  font-size:   12px;
+}
+.fire-mode-label  { font-weight: bold; min-width: 130px; }
+.fire-mode-action { font-size: 10px; color: var(--sr4-text-muted); }
+.fire-mode-stats  { color: var(--sr4-text); }
+.fire-mode-cost   { margin-left: auto; display: flex; gap: 8px; }
+.ammo-shortage    { color: var(--sr4-red); font-weight: bold; }
+.recoil-added     { font-size: 10px; color: var(--sr4-orange); }
+
+/* ── RELOAD DIALOG ────────────────────────────────────────────────────────── */
+.reload-info {
+  padding:       6px 8px;
+  background:    var(--sr4-bg-mid);
+  border:        1px solid var(--sr4-border);
+  border-radius: var(--sr4-radius);
+  margin-bottom: 10px;
+  font-size:     12px;
+}
+.reload-ammo-select {
+  width:         100%;
+  background:    var(--sr4-bg-mid);
+  border:        1px solid var(--sr4-border);
+  color:         var(--sr4-text);
+  border-radius: var(--sr4-radius);
+  padding:       4px 6px;
+  font-size:     13px;
+}
+
+/* ============================================================================
+   GEAR LIST — AMMO & RECOIL CELLS
+   ============================================================================ */
+
+/* Weapon table ammo column */
+.ammo-cell {
+  display:     flex;
+  align-items: center;
+  gap:         4px;
+  white-space: nowrap;
+}
+.ammo-count { font-family: var(--sr4-font-mono); font-size: 12px; }
+.ammo-count.ammo-empty { color: var(--sr4-red); font-weight: bold; }
+.ammo-count.ammo-low   { color: var(--sr4-orange); }
+
+.ammo-type-badge-small {
+  font-size:     10px;
+  background:    var(--sr4-bg-light);
+  border:        1px solid var(--sr4-border);
+  border-radius: 2px;
+  padding:       0 4px;
+  color:         var(--sr4-text-muted);
+  max-width:     70px;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+}
+
+.weapon-reload {
+  font-size:  14px;
+  color:      var(--sr4-neon-dim);
+  cursor:     pointer;
+  opacity:    0.7;
+  transition: opacity 0.1s;
+}
+.weapon-reload:hover { opacity: 1; color: var(--sr4-neon); }
+
+/* DV badge (ammo modifier on weapon cell) */
+.ammo-dv-badge {
+  font-size:     10px;
+  border-radius: 2px;
+  padding:       0 3px;
+  font-family:   var(--sr4-font-mono);
+}
+.ammo-dv-badge.pos { background: rgba(0,212,170,0.2); color: var(--sr4-neon); }
+.ammo-dv-badge.neg { background: rgba(232,48,48,0.2); color: var(--sr4-red); }
+
+/* Recoil cell */
+.recoil-cell {
+  display:     flex;
+  align-items: center;
+  gap:         4px;
+}
+.recoil-value {
+  font-family: var(--sr4-font-mono);
+  font-size:   12px;
+  color:       var(--sr4-orange);
+}
+.recoil-rc { font-size: 10px; color: var(--sr4-text-muted); }
+.recoil-reset {
+  font-size:  11px;
+  color:      var(--sr4-text-muted);
+  cursor:     pointer;
+  opacity:    0.5;
+}
+.recoil-reset:hover { opacity: 1; color: var(--sr4-red); }
+
+/* Ammo inventory table */
+.ammo-table .ammo-flags-cell { display: flex; gap: 4px; flex-wrap: wrap; }
+.ammo-flag {
+  font-size:     10px;
+  background:    var(--sr4-bg-light);
+  border:        1px solid var(--sr4-border);
+  border-radius: 2px;
+  padding:       1px 4px;
+  color:         var(--sr4-text-muted);
+}
+.ammo-flag.elec    { border-color: var(--sr4-yellow); color: var(--sr4-yellow); }
+.ammo-flag.restrict{ border-color: var(--sr4-red);    color: var(--sr4-red); }
+.ammo-flag.tracer  { border-color: var(--sr4-neon);   color: var(--sr4-neon); }
+
+/* Chat roll ammo line */
+.roll-ammo-line {
+  display:      flex;
+  align-items:  center;
+  flex-wrap:    wrap;
+  gap:          8px;
+  padding:      4px 8px;
+  margin-top:   4px;
+  background:   rgba(0,0,0,0.2);
+  border-top:   1px solid var(--sr4-border);
+  font-size:    11px;
+  color:        var(--sr4-text-muted);
+}
+.roll-ammo-line .ammo-type-badge { font-size: 10px; background: var(--sr4-bg-light); border: 1px solid var(--sr4-border); border-radius: 2px; padding: 0 4px; }
+.roll-ammo-line .fire-bonus      { color: var(--sr4-neon); font-size: 10px; }
+
+/* Empty row in gear tables */
+.empty-row { color: var(--sr4-text-muted); font-size: 11px; text-align: center; padding: 6px; }
+
+/* ── ITEM SHEET ─────────────────────────────────────────────────────────── */
+
+.sr4.item-sheet .window-content {
+  padding:        0;
+  overflow:       hidden;
+  display:        flex;
+  flex-direction: column;
+  height:         100%;
+  background:     var(--sr4-bg);
+  color:          var(--sr4-text);
+}
+
+.sr4.item-sheet form {
+  display:        flex;
+  flex-direction: column;
+  height:         100%;
+  min-height:     0;
+}
+
+/* Header */
+.item-sheet-header {
+  display:        flex;
+  align-items:    center;
+  gap:            12px;
+  padding:        10px 14px;
+  background:     var(--sr4-bg-mid);
+  border-bottom:  1px solid var(--sr4-border);
+  flex-shrink:    0;
+}
+
+.item-sheet-img {
+  width:         56px;
+  height:        56px;
+  object-fit:    contain;
+  border:        1px solid var(--sr4-border);
+  border-radius: 4px;
+  background:    var(--sr4-bg-dark);
+  cursor:        pointer;
+}
+
+.item-sheet-title {
+  flex:           1;
+  min-width:      0;
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+}
+
+.item-sheet-name {
+  background:    transparent;
+  border:        none;
+  border-bottom: 1px solid var(--sr4-border);
+  color:         var(--sr4-neon);
+  font-size:     15px;
+  font-weight:   600;
+  font-family:   var(--font-primary);
+  width:         100%;
+  padding:       2px 0;
+}
+.item-sheet-name:focus { outline: none; border-bottom-color: var(--sr4-neon); }
+
+.item-sheet-type-label {
+  font-size:  11px;
+  color:      var(--sr4-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Body */
+.item-sheet-body {
+  flex:       1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding:    12px 14px;
+  display:    flex;
+  flex-direction: column;
+  gap:        12px;
+}
+
+/* Form grid */
+.item-form-grid {
+  display:               grid;
+  grid-template-columns: 140px 1fr;
+  gap:                   6px 10px;
+  align-items:           center;
+}
+
+.item-form-row {
+  display:   contents; /* each row contributes 2 grid cells */
+}
+
+.item-form-row label {
+  font-size:   11px;
+  color:       var(--sr4-text-muted);
+  white-space: nowrap;
+  overflow:    hidden;
+  text-overflow: ellipsis;
+}
+
+.item-form-grid input[type="text"],
+.item-form-grid input[type="number"],
+.item-form-grid select {
+  width:         100%;
+  background:    var(--sr4-bg-dark);
+  border:        1px solid var(--sr4-border);
+  border-radius: 3px;
+  color:         var(--sr4-text);
+  font-size:     12px;
+  padding:       3px 6px;
+  height:        26px;
+  box-sizing:    border-box;
+}
+.item-form-grid input:focus,
+.item-form-grid select:focus {
+  outline:      none;
+  border-color: var(--sr4-neon);
+}
+
+.item-form-grid input[type="checkbox"] {
+  width:  16px;
+  height: 16px;
+  accent-color: var(--sr4-neon);
+  justify-self: start;
+}
+
+/* Derived (read-only) values */
+.item-form-derived {
+  font-size:   12px;
+  color:       var(--sr4-neon);
+  font-weight: 600;
+  padding:     3px 0;
+}
+.item-form-derived.ess-cost { font-size: 13px; }
+
+/* Commlink attribute rows — slight indent */
+.item-form-row.commlink-attr label { padding-left: 12px; color: var(--sr4-cyan); }
+
+/* Description section */
+.item-description-section {
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+}
+
+.item-description-label {
+  font-size:      11px;
+  color:          var(--sr4-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.item-description-editor {
+  width:         100%;
+  min-height:    90px;
+  background:    var(--sr4-bg-dark);
+  border:        1px solid var(--sr4-border);
+  border-radius: 3px;
+  color:         var(--sr4-text);
+  font-size:     12px;
+  font-family:   var(--font-primary);
+  padding:       6px 8px;
+  resize:        vertical;
+  box-sizing:    border-box;
+}
+.item-description-editor:focus { outline: none; border-color: var(--sr4-neon); }
+
+.item-description-view {
+  font-size:  12px;
+  color:      var(--sr4-text);
+  padding:    6px 0;
+  min-height: 40px;
+}
+
+/* Per-type accent on the type label */
+.sheet-weapon     .item-sheet-type-label { color: var(--sr4-red); }
+.sheet-armor      .item-sheet-type-label { color: var(--sr4-cyan); }
+.sheet-cyberware  .item-sheet-type-label { color: var(--sr4-neon); }
+.sheet-ammo       .item-sheet-type-label { color: var(--sr4-yellow); }
+.sheet-spell      .item-sheet-type-label { color: var(--sr4-purple, #c06cdd); }
+.sheet-adeptpower .item-sheet-type-label { color: var(--sr4-purple, #c06cdd); }
+.sheet-program    .item-sheet-type-label { color: var(--sr4-cyan); }
+.sheet-quality    .item-sheet-type-label { color: var(--sr4-yellow); }
+.sheet-contact    .item-sheet-type-label { color: var(--sr4-neon); }
+.sheet-gear       .item-sheet-type-label { color: var(--sr4-text-muted); }
+
+/* ── PROSE-MIRROR / data-edit HTML EDITORS (v13 compatible) ───────────────── */
+
+/* Wrapper that Foundry uses to activate ProseMirror on click */
+.sr4 .editor {
+  background:    var(--sr4-bg-dark);
+  border:        1px solid var(--sr4-border);
+  border-radius: 3px;
+  min-height:    80px;
+  cursor:        text;
+  margin-bottom: 8px;
+}
+.sr4 .editor:focus-within { border-color: var(--sr4-neon); }
+
+.sr4 .editor-content {
+  padding:    8px 10px;
+  min-height: 80px;
+  color:      var(--sr4-text);
+  font-size:  12px;
+  line-height: 1.5;
+  outline:    none;
+}
+
+/* ProseMirror editor itself (when activated) */
+.sr4 .editor .prosemirror,
+.sr4 .editor prose-mirror {
+  padding:    8px 10px;
+  min-height: 80px;
+  color:      var(--sr4-text);
+  font-size:  12px;
+}
+
+/* ── SPIRIT / SPRITE / VEHICLE SHARED ────────────────────────────────────── */
+
+.sr4-spirit-sheet .spirit-attrs,
+.sr4-sprite-sheet .sprite-attrs {
+  margin-bottom: 10px;
+}
+
+.attr-grid {
+  display:               grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:                   6px;
+  margin-bottom:         4px;
+}
+
+.attr-cell {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  background:      var(--sr4-bg-mid);
+  border:          1px solid var(--sr4-border);
+  border-radius:   var(--sr4-radius);
+  padding:         4px 2px;
+}
+
+.attr-cell label {
+  font-size:      10px;
+  color:          var(--sr4-text-label);
+  letter-spacing: 1px;
+  margin-bottom:  2px;
+}
+
+.attr-cell .attr-value {
+  font-family:  var(--sr4-font-mono);
+  font-size:    18px;
+  color:        var(--sr4-neon);
+  line-height:  1;
+  margin-bottom: 2px;
+}
+
+.attr-cell .attr-offset {
+  width:      36px;
+  text-align: center;
+  font-size:  11px;
+  padding:    1px 2px;
+  background: var(--sr4-bg-dark);
+  color:      var(--sr4-text-muted);
+  border:     1px solid var(--sr4-border);
+  border-radius: 2px;
+}
+
+.attr-hint {
+  font-size:  10px;
+  color:      var(--sr4-text-muted);
+  font-style: italic;
+  margin:     0 0 6px;
+}
+
+.spirit-binding .binding-row,
+.sprite-registration .binding-row,
+.vehicle-rigger .binding-row {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  flex-wrap:   wrap;
+  margin-top:  4px;
+}
+
+.services-input { width: 48px; }
+.drone-rating-input { width: 48px; }
+.force-input  { width: 48px; }
+.level-input  { width: 48px; }
+
+.power-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  margin:      3px 0;
+}
+
+.power-row input[type="text"] { flex: 1; }
+
+.power-add, .power-delete,
+.mod-add, .mod-delete,
+.weapon-mount-add, .weapon-mount-delete {
+  cursor:  pointer;
+  color:   var(--sr4-neon);
+  padding: 0 4px;
+}
+
+.power-delete, .mod-delete, .weapon-mount-delete {
+  color: var(--sr4-red);
+}
+
+/* ── VEHICLE SHEET ────────────────────────────────────────────────────────── */
+
+.vehicle-attr-grid {
+  display:               grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:                   5px;
+  margin-bottom:         10px;
+}
+
+.vattr-row {
+  display:         flex;
+  align-items:     center;
+  gap:             6px;
+  background:      var(--sr4-bg-mid);
+  border:          1px solid var(--sr4-border);
+  border-radius:   var(--sr4-radius);
+  padding:         4px 8px;
+}
+
+.vattr-row label {
+  flex:       1;
+  font-size:  12px;
+  color:      var(--sr4-text-label);
+}
+
+.vattr-row input[type="number"] {
+  width:      44px;
+  text-align: center;
+  font-family: var(--sr4-font-mono);
+  font-size:  15px;
+  color:      var(--sr4-neon);
+}
+
+.mount-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  margin:      4px 0;
+  flex-wrap:   wrap;
+}
+.mount-row .mount-name { flex: 1; }
+.mount-row .ammo-input { width: 56px; }
+
+.mod-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  margin:      3px 0;
+}
+.mod-row .mod-name  { flex: 1; }
+.mod-row .mod-notes { flex: 2; }
+
+/* ── POOL BUILDER DIALOG ─────────────────────────────────────────────────── */
+
+.pool-builder-dialog .pool-builder {
+  padding:    8px 4px;
+  font-family: var(--sr4-font-body);
+}
+
+.pool-builder-dialog .pb-actor-name {
+  font-size:   15px;
+  color:       var(--sr4-neon);
+  font-family: var(--sr4-font-mono);
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.pool-builder-dialog .pb-row {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  margin:      5px 0;
+}
+
+.pool-builder-dialog .pb-row label {
+  flex:       0 0 90px;
+  font-size:  12px;
+  color:      var(--sr4-text-label);
+}
+
+.pool-builder-dialog select,
+.pool-builder-dialog .pb-row input[type="text"],
+.pool-builder-dialog .pb-row input[type="number"] {
+  flex:       1;
+  min-width:  0;
+}
+
+.pool-builder-dialog .pb-val {
+  flex:        0 0 28px;
+  text-align:  right;
+  font-family: var(--sr4-font-mono);
+  font-size:   15px;
+  color:       var(--sr4-neon);
+}
+
+.pool-builder-dialog .pb-modifiers {
+  border-top:    1px solid var(--sr4-border);
+  margin:        8px 0;
+  padding-top:   6px;
+}
+
+.pool-builder-dialog .pb-mod-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  margin:      3px 0;
+}
+
+.pool-builder-dialog .pb-mod-label { flex: 1; }
+.pool-builder-dialog .pb-mod-val   { width: 56px; }
+
+.pool-builder-dialog .pb-mod-add {
+  background:    transparent;
+  border:        1px dashed var(--sr4-border);
+  color:         var(--sr4-neon);
+  padding:       3px 8px;
+  border-radius: var(--sr4-radius);
+  cursor:        pointer;
+  font-size:     11px;
+  margin-top:    4px;
+}
+
+.pool-builder-dialog .pb-mod-remove {
+  background: transparent;
+  border:     none;
+  color:      var(--sr4-red);
+  cursor:     pointer;
+  padding:    0 4px;
+}
+
+.pool-builder-dialog .pb-total-row {
+  display:       flex;
+  align-items:   baseline;
+  gap:           10px;
+  border-top:    1px solid var(--sr4-border);
+  border-bottom: 1px solid var(--sr4-border);
+  margin:        10px 0;
+  padding:       8px 0;
+}
+
+.pool-builder-dialog .pb-total-label {
+  font-size:  12px;
+  color:      var(--sr4-text-label);
+  flex:       0 0 auto;
+}
+
+.pool-builder-dialog .pb-total {
+  font-family:  var(--sr4-font-mono);
+  font-size:    22px;
+  color:        var(--sr4-neon);
+  flex:         0 0 auto;
+}
+
+.pool-builder-dialog .pb-total-breakdown {
+  font-size:  10px;
+  color:      var(--sr4-text-muted);
+  font-style: italic;
+}
+
+.pool-builder-dialog .pb-options-row {
+  display:     flex;
+  align-items: center;
+  gap:         16px;
+  flex-wrap:   wrap;
+}
+
+.pool-builder-dialog .pb-threshold {
+  width:      44px;
+  margin-left: 4px;
+}
+
+.pb-spec-row .pb-spec-label { margin-left: 4px; }
+
+/* ── SR4 COMBAT TRACKER ──────────────────────────────────────────────────── */
+
+.sr4-initiative-roll {
+  font-family: var(--sr4-font-mono);
+  font-size:   13px;
+}
+
+.sr4-initiative-roll .init-score {
+  font-size: 18px;
+  color:     var(--sr4-neon);
+  margin:    0 4px;
+}
+
+.sr4-initiative-roll .init-breakdown {
+  color:     var(--sr4-text-muted);
+  font-size: 11px;
+}
+
+.sr4-initiative-roll .init-ip {
+  margin-left: 8px;
+  color:       var(--sr4-yellow);
+  font-size:   11px;
+}
+
+.sr4-ip-advance,
+.sr4-combat-turn {
+  background:    var(--sr4-bg-mid);
+  border:        1px solid var(--sr4-neon-dim);
+  border-left:   3px solid var(--sr4-neon);
+  border-radius: var(--sr4-radius);
+  padding:       6px 10px;
+  font-family:   var(--sr4-font-body);
+  font-size:     13px;
+}
+
+/* Dim combatants at initiative 0 in the tracker */
+.combat-tracker .combatant[data-sr4-inactive="true"] {
+  opacity: 0.45;
+}

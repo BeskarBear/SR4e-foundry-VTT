@@ -1,0 +1,265 @@
+{{!-- SR4 Character Sheet --}}
+<form class="sr4-sheet sr4-character-sheet {{actor.type}}" autocomplete="off">
+
+  {{!-- ── SHEET HEADER ──────────────────────────────────────────────── --}}
+  <header class="sheet-header">
+    <div class="portrait-wrap">
+      <img class="actor-portrait" src="{{actor.img}}" data-action="editImage" data-edit="img" title="{{actor.name}}" />
+    </div>
+    <div class="header-fields">
+      <div class="header-row">
+        <input class="charname" type="text" name="name" value="{{actor.name}}" placeholder="Name" />
+        <input class="handle" type="text" name="system.handle" value="{{system.handle}}" placeholder="Handle" />
+      </div>
+      <div class="header-row">
+        <select name="system.metatype">
+          {{selectOptions metatypeChoices selected=system.metatype}}
+        </select>
+        <input type="text" name="system.archetype" value="{{system.archetype}}" placeholder="Archetype" />
+      </div>
+      <div class="header-row">
+        <div class="essence-block">
+          <label>ESS</label>
+          <input type="number" name="system.attributes.essence" value="{{attrs.essence}}" min="0" max="6" step="0.1" />
+        </div>
+        <div class="edge-block">
+          <label>EDGE</label>
+          {{edgePips current=attrs.edge.current max=attrs.edge.base}}
+          <span class="edge-fraction">{{attrs.edge.current}}/{{attrs.edge.base}}</span>
+        </div>
+        <div class="rep-block">
+          <label>Street Cred</label>
+          <input type="number" name="system.reputation.streetCred" value="{{system.reputation.streetCred}}" />
+          <label>Notoriety</label>
+          <input type="number" name="system.reputation.notoriety" value="{{system.reputation.notoriety}}" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {{!-- ── TABS ──────────────────────────────────────────────────────── --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="core"   data-action="tab" data-group="primary">Core</a>
+    <a class="item"        data-tab="skills" data-action="tab" data-group="primary">Skills</a>
+    <a class="item"        data-tab="gear"   data-action="tab" data-group="primary">Gear</a>
+    <a class="item"        data-tab="matrix" data-action="tab" data-group="primary">Matrix</a>
+    {{#if system.isAwakened}}<a class="item" data-tab="magic" data-action="tab" data-group="primary">Magic</a>{{/if}}
+    <a class="item"        data-tab="bio"    data-action="tab" data-group="primary">Bio</a>
+  </nav>
+
+  <section class="sheet-body">
+
+    {{!-- ══════════════════════════════════════════════════════════════════
+         CORE TAB — Attributes + Derived + Condition Monitors
+         ══════════════════════════════════════════════════════════════════ --}}
+    <div class="tab active" data-tab="core" data-group="primary">
+
+      {{> "systems/sr4/templates/actor/partials/attributes.hbs"}}
+      {{> "systems/sr4/templates/actor/partials/condition-monitors.hbs"}}
+
+      {{!-- Wound Modifier --}}
+      {{#if woundModifier}}
+      <div class="wound-modifier">
+        <label>Wound Modifier</label>
+        <span class="modifier-value">{{woundModifier}}</span>
+      </div>
+      {{/if}}
+
+      {{!-- Essence Breakdown --}}
+      <div class="essence-breakdown">
+        <label>Essence</label>
+        <span class="essence-current">{{essence.current}}</span>
+        <span class="essence-sep">/</span>
+        <span class="essence-base">{{essence.base}}</span>
+        {{#if essence.lost}}
+        <span class="essence-lost" title="Total Essence lost to installed ware">− {{essence.lost}} from ware</span>
+        {{/if}}
+      </div>
+
+      {{!-- Derived Stats Quick Reference --}}
+      <div class="derived-stats-grid">
+        <div class="derived-stat" title="Initiative = Reaction + Intuition">
+          <label>Initiative</label>
+          <span>{{derived.initiativeBase}} + {{derived.initiativeDice}}d6</span>
+        </div>
+        <div class="derived-stat" title="Composure = Willpower + Charisma">
+          <label>Composure</label>
+          <span>{{derived.composure}}</span>
+        </div>
+        <div class="derived-stat" title="Judge Intentions = Intuition + Charisma">
+          <label>Judge Intent.</label>
+          <span>{{derived.judgeIntentions}}</span>
+        </div>
+        <div class="derived-stat" title="Memory = Logic + Willpower">
+          <label>Memory</label>
+          <span>{{derived.memory}}</span>
+        </div>
+        <div class="derived-stat" title="Lift/Carry = Body + Strength">
+          <label>Lift/Carry</label>
+          <span>{{derived.liftCarry}}</span>
+        </div>
+        <div class="derived-stat">
+          <label>Lifestyle</label>
+          <span class="lifestyle-value">{{system.lifestyle}}</span>
+        </div>
+        <div class="derived-stat">
+          <label>Nuyen</label>
+          <input type="number" name="system.nuyen" value="{{system.nuyen}}" />
+        </div>
+        <div class="derived-stat">
+          <label>Karma</label>
+          <input type="number" name="system.karma.current" value="{{system.karma.current}}" />
+          <span>/</span>
+          <input type="number" name="system.karma.total" value="{{system.karma.total}}" />
+        </div>
+      </div>
+
+    </div>{{!-- /core --}}
+
+    {{!-- ══════════════════════════════════════════════════════════════════
+         SKILLS TAB
+         ══════════════════════════════════════════════════════════════════ --}}
+    <div class="tab" data-tab="skills" data-group="primary">
+
+      {{#each skillGroups as |group groupName|}}
+      <div class="skill-group">
+        <h3 class="skill-group-header">{{groupName}}</h3>
+        {{> "systems/sr4/templates/actor/partials/skills-group.hbs" skills=group}}
+      </div>
+      {{/each}}
+
+      {{!-- Knowledge Skills --}}
+      <div class="skill-group">
+        <h3 class="skill-group-header">
+          Knowledge
+          <a class="item-create knowledge-add" data-type="knowledge" title="Add Knowledge Skill">+</a>
+        </h3>
+        {{#each system.knowledgeSkills as |k i|}}
+        <div class="knowledge-skill" data-index="{{i}}">
+          <input type="text" name="system.knowledgeSkills.{{i}}.name" value="{{k.name}}" placeholder="Skill name" />
+          <input type="number" name="system.knowledgeSkills.{{i}}.value" value="{{k.value}}" min="1" max="12" class="skill-val" />
+          <input type="text" name="system.knowledgeSkills.{{i}}.specialization" value="{{k.specialization}}" placeholder="Spec." class="spec-input" />
+          <a class="knowledge-remove" data-index="{{i}}" title="Remove">✕</a>
+        </div>
+        {{/each}}
+      </div>
+
+      {{!-- Language Skills --}}
+      <div class="skill-group">
+        <h3 class="skill-group-header">
+          Languages
+          <a class="item-create language-add" title="Add Language">+</a>
+        </h3>
+        {{#each system.languageSkills as |l i|}}
+        <div class="language-skill" data-index="{{i}}">
+          <input type="text" name="system.languageSkills.{{i}}.name" value="{{l.name}}" placeholder="Language" />
+          <input type="number" name="system.languageSkills.{{i}}.value" value="{{l.value}}" min="1" max="12" class="skill-val" />
+          <label class="native-label">
+            <input type="checkbox" name="system.languageSkills.{{i}}.native" {{#if l.native}}checked{{/if}} />
+            N
+          </label>
+          <a class="language-remove" data-index="{{i}}" title="Remove">✕</a>
+        </div>
+        {{/each}}
+      </div>
+
+    </div>{{!-- /skills --}}
+
+    {{!-- ══════════════════════════════════════════════════════════════════
+         GEAR TAB — Weapons, Armor, Cyberware, General Gear
+         ══════════════════════════════════════════════════════════════════ --}}
+    <div class="tab" data-tab="gear" data-group="primary">
+
+      {{> "systems/sr4/templates/actor/partials/gear-list.hbs"
+          weapons=weapons armor=armor cyberware=cyberware gear=gear}}
+
+    </div>{{!-- /gear --}}
+
+    {{!-- ══════════════════════════════════════════════════════════════════
+         MATRIX TAB
+         ══════════════════════════════════════════════════════════════════ --}}
+    <div class="tab" data-tab="matrix" data-group="primary">
+
+      {{> "systems/sr4/templates/actor/partials/matrix-panel.hbs"
+          system=system livingPersona=livingPersona programs=programs}}
+
+    </div>{{!-- /matrix --}}
+
+    {{!-- ══════════════════════════════════════════════════════════════════
+         MAGIC TAB (Awakened only)
+         ══════════════════════════════════════════════════════════════════ --}}
+    {{#if system.isAwakened}}
+    <div class="tab" data-tab="magic" data-group="primary">
+
+      {{> "systems/sr4/templates/actor/partials/magic-panel.hbs"
+          system=system spells=spells adeptPowers=adeptPowers}}
+
+    </div>
+    {{/if}}
+
+    {{!-- ══════════════════════════════════════════════════════════════════
+         BIO TAB
+         ══════════════════════════════════════════════════════════════════ --}}
+    <div class="tab" data-tab="bio" data-group="primary">
+      <div class="bio-grid">
+        <div class="bio-identity">
+          <div class="bio-row">
+            <label>Gender</label>
+            <input type="text" name="system.gender" value="{{system.gender}}" />
+          </div>
+          <div class="bio-row">
+            <label>Age</label>
+            <input type="text" name="system.age" value="{{system.age}}" />
+          </div>
+          <div class="bio-row">
+            <label>Height</label>
+            <input type="text" name="system.height" value="{{system.height}}" />
+          </div>
+          <div class="bio-row">
+            <label>Weight</label>
+            <input type="text" name="system.weight" value="{{system.weight}}" />
+          </div>
+        </div>
+
+        <div class="contacts-section">
+          <h3>Contacts
+            <a class="item-create" data-type="contact" title="Add Contact">+</a>
+          </h3>
+          {{#each contacts as |c|}}
+          <div class="contact item" data-item-id="{{c.id}}">
+            <span class="item-name">{{c.name}}</span>
+            <span class="contact-role">{{c.system.role}}</span>
+            <span class="contact-ratings" title="Connection / Loyalty">
+              C{{c.system.connection}} L{{c.system.loyalty}}
+            </span>
+            <a class="item-delete" title="Delete">✕</a>
+          </div>
+          {{/each}}
+        </div>
+
+        <div class="qualities-section">
+          <h3>Qualities
+            <a class="item-create" data-type="quality" title="Add Quality">+</a>
+          </h3>
+          {{#each qualities as |q|}}
+          <div class="quality item {{q.system.qualityType}}" data-item-id="{{q.id}}">
+            <span class="item-name">{{q.name}}</span>
+            <span class="quality-type">{{q.system.qualityType}}</span>
+            <span class="quality-bp">{{q.system.bpCost}} BP</span>
+            <a class="item-delete" title="Delete">✕</a>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="bio-notes">
+        <h3>Background</h3>
+        <textarea name="system.background" rows="6">{{system.background}}</textarea>
+        <h3>Notes</h3>
+        <textarea name="system.notes" rows="6">{{system.notes}}</textarea>
+      </div>
+
+    </div>{{!-- /bio --}}
+
+  </section>
+</form>

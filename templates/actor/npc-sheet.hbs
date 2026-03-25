@@ -1,0 +1,147 @@
+{{!-- SR4 NPC Sheet --}}
+<form class="sr4-sheet sr4-npc-sheet" autocomplete="off">
+
+  <header class="sheet-header">
+    <div class="portrait-wrap">
+      <img class="actor-portrait" src="{{actor.img}}" data-action="editImage" data-edit="img" title="{{actor.name}}" />
+    </div>
+    <div class="header-fields">
+      <input class="charname" type="text" name="name" value="{{actor.name}}" placeholder="NPC Name" />
+      <div class="header-row">
+        <input type="text" name="system.role" value="{{system.role}}" placeholder="Role" />
+        <input type="text" name="system.affiliation" value="{{system.affiliation}}" placeholder="Affiliation" />
+      </div>
+      <div class="header-row">
+        <label>PR</label>
+        <input type="number" name="system.professionalRating" value="{{system.professionalRating}}" min="1" max="6" class="pr-input" />
+      </div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="stats"  data-action="tab" data-group="primary">Stats</a>
+    <a class="item"        data-tab="gear"   data-action="tab" data-group="primary">Gear</a>
+    <a class="item"        data-tab="notes"  data-action="tab" data-group="primary">Notes</a>
+  </nav>
+
+  <section class="sheet-body">
+
+    <div class="tab active" data-tab="stats" data-group="primary">
+
+      {{!-- Condition Monitors --}}
+      <div class="condition-monitors">
+        <div class="cm-track">
+          <label>Physical
+            <span class="cm-fraction">{{system.condition.physical.value}}/{{system.condition.physical.max}}</span>
+          </label>
+          <div class="cm-boxes">
+            {{cmBoxes monitor="physical" value=system.condition.physical.value max=system.condition.physical.max}}
+          </div>
+        </div>
+        <div class="cm-track">
+          <label>Stun
+            <span class="cm-fraction">{{system.condition.stun.value}}/{{system.condition.stun.max}}</span>
+          </label>
+          <div class="cm-boxes">
+            {{cmBoxes monitor="stun" value=system.condition.stun.value max=system.condition.stun.max}}
+          </div>
+        </div>
+      </div>
+
+      {{!-- Quick Pools --}}
+      <div class="npc-pools">
+        <h3>Dice Pools</h3>
+        <div class="pool-grid">
+          <div class="pool-row">
+            <span>Combat</span>
+            <input type="number" name="system.pools.combat" value="{{system.pools.combat}}" min="0" />
+            <a class="pool-roll" data-pool="{{system.pools.combat}}" data-label="Combat">⚄</a>
+          </div>
+          <div class="pool-row">
+            <span>Defense</span>
+            <input type="number" name="system.pools.defense" value="{{system.pools.defense}}" min="0" />
+            <a class="pool-roll" data-pool="{{system.pools.defense}}" data-label="Defense">⚄</a>
+          </div>
+          <div class="pool-row">
+            <span>Perception</span>
+            <input type="number" name="system.pools.perception" value="{{system.pools.perception}}" min="0" />
+            <a class="pool-roll" data-pool="{{system.pools.perception}}" data-label="Perception">⚄</a>
+          </div>
+          <div class="pool-row">
+            <span>Social</span>
+            <input type="number" name="system.pools.social" value="{{system.pools.social}}" min="0" />
+            <a class="pool-roll" data-pool="{{system.pools.social}}" data-label="Social">⚄</a>
+          </div>
+        </div>
+
+        <div class="npc-armor">
+          <label>Armor</label>
+          <span>B</span><input type="number" name="system.armorB" value="{{system.armorB}}" min="0" />
+          <span>I</span><input type="number" name="system.armorI" value="{{system.armorI}}" min="0" />
+        </div>
+
+        <div class="npc-weapon">
+          <label>Weapon</label>
+          <input type="text" name="system.weaponSummary" value="{{system.weaponSummary}}" placeholder="Weapon name" class="weapon-name" />
+          <input type="number" name="system.weaponPool" value="{{system.weaponPool}}" min="0" />
+          <a class="pool-roll" data-pool="{{system.weaponPool}}" data-label="{{system.weaponSummary}}">⚄</a>
+          <input type="text" name="system.weaponDV" value="{{system.weaponDV}}" placeholder="DV" class="dv-input" />
+          <span>AP</span><input type="number" name="system.weaponAP" value="{{system.weaponAP}}" />
+        </div>
+
+        <div class="npc-initiative">
+          <label>Initiative</label>
+          <span>{{system.initiativeBase}} + 1d6</span>
+          <input type="number" name="system.initiativePasses" value="{{system.initiativePasses}}" min="1" max="4" />
+          <span>IP</span>
+        </div>
+      </div>
+
+      {{!-- Special Abilities --}}
+      {{#if system.specialAbilities.length}}
+      <div class="special-abilities">
+        <h3>Special Abilities</h3>
+        {{#each system.specialAbilities as |sa i|}}
+        <div class="ability-row">
+          <strong>{{sa.name}}</strong>
+          {{#if sa.notes}}<span>{{sa.notes}}</span>{{/if}}
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+    </div>{{!-- /stats --}}
+
+    <div class="tab" data-tab="gear" data-group="primary">
+      <h3>Weapons <a class="item-create" data-type="weapon" title="Add Weapon">+</a></h3>
+      {{#each weapons as |w|}}
+      <div class="item" data-item-id="{{w.id}}">
+        <span class="item-name">{{w.name}}</span>
+        <span>{{w.system.dv}}</span>
+        <span>AP {{w.system.ap}}</span>
+        <a class="item-delete" title="Delete">✕</a>
+      </div>
+      {{/each}}
+
+      <h3>Gear <a class="item-create" data-type="gear" title="Add Gear">+</a></h3>
+      {{#each gear as |g|}}
+      <div class="item" data-item-id="{{g.id}}">
+        <span class="item-name">{{g.name}}</span>
+        <a class="item-delete" title="Delete">✕</a>
+      </div>
+      {{/each}}
+    </div>{{!-- /gear --}}
+
+    <div class="tab" data-tab="notes" data-group="primary">
+      <div class="npc-tactics">
+        <label>Tactics</label>
+        <input type="text" name="system.tactics" value="{{system.tactics}}" placeholder="Combat behavior notes" />
+      </div>
+      <h3>Description</h3>
+      <textarea name="system.description" rows="5">{{system.description}}</textarea>
+      <h3>Notes</h3>
+      <textarea name="system.notes" rows="5">{{system.notes}}</textarea>
+    </div>
+
+  </section>
+</form>
