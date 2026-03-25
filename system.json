@@ -8,7 +8,8 @@
     "verified": "13"
   },
   "authors": [{
-    "name": "beskarbear"
+    "name": "beskarbear",
+    "url": "https://github.com/BeskarBear"
   }],
   "esmodules": ["module/sr4.mjs"],
   "styles": ["styles/sr4.css"],
@@ -60,7 +61,7 @@
     { "name": "sr4-gear-runnerscompanion",      "label": "Gear - Runner's Companion",        "path": "packs/sr4-gear-runnerscompanion",      "type": "Item", "system": "sr4" }
   ],
   "socket": false,
-  "url": "",
-  "manifest": "",
-  "download": ""
+  "url": "https://github.com/BeskarBear/SR4e-foundry-VTT",
+  "manifest": "https://raw.githubusercontent.com/BeskarBear/SR4e-foundry-VTT/main/system.json",
+  "download": "https://github.com/BeskarBear/SR4e-foundry-VTT/releases/download/v0.1.0/sr4.zip"
 }
